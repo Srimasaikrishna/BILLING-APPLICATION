@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payments - Accountant Dashboard</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #f5f5f5;
+        display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        background: #fff;
+        width: 200px;
+        height: 100vh;
+        padding: 20px 10px;
+        box-shadow: 2px 0px 5px rgba(0,0,0,0.1);
+    }
+    .sidebar h3 {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .sidebar a {
+        display: block;
+        text-decoration: none;
+        color: #333;
+        padding: 10px 8px;
+        margin-bottom: 8px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    .sidebar a:hover {
+        background: #e0e0e0;
+    }
+    .active {
+        background: #d0e4ff;
+        color: #007bff;
+    }
+
+    /* Main content */
+    .main {
+        flex: 1;
+        padding: 20px;
+    }
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .total-payment {
+        background: #fff;
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #222;
+        box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+    }
+    .total-payment span {
+        color: green;
+    }
+
+    /* Table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    th, td {
+        padding: 14px 16px; /* More space vertically & horizontally */
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    tr {
+        height: 55px; /* Taller rows */
+    }
+    th {
+        background: #f0f0f0;
+    }
+
+    /* Status Colors */
+    .status-success { color: green; font-weight: bold; }
+    .status-pending { color: orange; font-weight: bold; }
+    .status-failed { color: red; font-weight: bold; }
+
+    /* Buttons */
+    .record-btn {
+        display: inline-block;
+        padding: 8px 15px;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .record-btn:hover {
+        background: #eee;
+    }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- React & Babel -->
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+function PaymentsPage() {
+  const [payments] = useState([
+    { invoice: "INV021", customer: "Pranay", date: "1/08/2025", amount: 6500, status: "Success" },
+    { invoice: "INV0213", customer: "Prabhas", date: "1/08/2025", amount: 4500, status: "Failed" },
+    { invoice: "INV0214", customer: "Sai Krishna", date: "1/08/2025", amount: 5000, status: "Success" },
+    { invoice: "INV0216", customer: "Pratab", date: "1/08/2025", amount: 6000, status: "Pending" },
+    { invoice: "INV0218", customer: "Swapna", date: "1/08/2025", amount: 5500, status: "Failed" }
+  ]);
+
+  const totalReceived = payments
+        .filter(p => p.status === "Success")
+        .reduce((sum, p) => sum + p.amount, 0);
+
+  return (
+    <div style={{ display: "flex", width: "100%" }}>
+      {/* Sidebar */}
+      <div className="sidebar">
+        <h3>Billing</h3>
+        <a href="dashboard.html">Accountant Dashboard</a>
+        <a href="manage-customers.html">Manage Customers</a>
+        <a href="invoices.html">Invoices</a>
+        <a href="payments.html" className="active">Payments</a>
+        <a href="#">Reports</a>
+        <a href="#">Profile</a>
+      </div>
+
+      {/* Main Content */}
+      <div className="main">
+        <div className="header">
+          <div className="total-payment">
+            Total Payment Received: <span>₹ {totalReceived.toLocaleString()}</span>
+          </div>
+          <button className="record-btn" onClick={() => alert('Record new payment')}>
+            ➕ Record new payment
+          </button>
+        </div>
+
+        {/* Payment Table */}
+        <table>
+          <thead>
+            <tr>
+              <th>Invoice</th>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Payment Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {payments.map((p, idx) => (
+              <tr key={idx}>
+                <td>{p.invoice}</td>
+                <td>{p.customer}</td>
+                <td>{p.date}</td>
+                <td>{p.amount}</td>
+                <td className={
+                  p.status === "Success" 
+                    ? "status-success" 
+                    : p.status === "Pending" 
+                      ? "status-pending" 
+                      : "status-failed"
+                }>
+                  {p.status}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<PaymentsPage />);
+</script>
+</body>
+</html>
