@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reports Dashboard</title>
+    <!-- React and ReactDOM CDNs -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel for JSX support -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #fafafa;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        margin: 32px auto;
+        max-width: 800px;
+        background: #fff;
+        padding: 32px;
+        box-shadow: 0 2px 8px #0001;
+        border-radius: 16px;
+      }
+      h1 {
+        font-size: 2.3rem;
+        font-weight: 700;
+        margin-bottom: 30px;
+      }
+      .grid {
+        display: flex;
+        gap: 48px;
+        margin-bottom: 24px;
+      }
+      .chart {
+        flex: 1;
+      }
+      .chart-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .summary-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 24px;
+        margin-bottom: 30px;
+      }
+      .summary-table th,
+      .summary-table td {
+        padding: 12px;
+        text-align: center;
+        font-size: 1rem;
+      }
+      .summary-table th {
+        background: #f5f5f5;
+        font-weight: 600;
+      }
+      .summary-table td {
+        background: #fff;
+      }
+      .activity-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      .activity-table th,
+      .activity-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #ececec;
+        font-size: 0.98rem;
+      }
+      .activity-table th {
+        background: #f9f9f9;
+        font-weight: 600;
+      }
+      .activity-table td {
+        background: #fff;
+      }
+      .chart-svg {
+        display: block;
+        width: 100%;
+        height: 170px;
+        margin-top: 12px;
+      }
+      @media (max-width: 700px) {
+        .grid {
+          flex-direction: column;
+        }
+        .container {
+          padding: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      function SalesChart() {
+        // Sales data (Jan-Jun)
+        const data = [12000, 35000, 47000, 53000, 69000, 93000];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+        const maxY = 100000;
+        const width = 340;
+        const height = 140;
+        const padding = 38;
+
+        // X/Y scale helpers
+        const xStep = (width - 2*padding) / (data.length - 1);
+        const yScale = (val) => {
+          const h = height - 2*padding;
+          return height - padding - (val / maxY) * h;
+        };
+
+        // Line path
+        let path = "";
+        data.forEach((d, i) => {
+          const x = padding + i * xStep;
+          const y = yScale(d);
+          path += i === 0 ? `M${x},${y} ` : `L${x},${y} `;
+        });
+
+        return (
+          <div>
+            <div className="chart-title">Sales</div>
+            <svg width={width} height={height} className="chart-svg">
+              {/* Y axis ticks/labels */}
+              {[0, 20_000, 40_000, 60_000, 80_000, 100_000].map((tick, i) => (
+                <g key={i}>
+                  <line
+                    x1={padding}
+                    x2={width-padding}
+                    y1={yScale(tick)}
+                    y2={yScale(tick)}
+                    stroke="#ececec"
+                  />
+                  <text
+                    x={5}
+                    y={yScale(tick)+5}
+                    fontSize="10"
+                    fill="#999"
+                  >{tick.toLocaleString()}</text>
+                </g>
+              ))}
+              {/* Line */}
+              <path d={path} fill="none" stroke="#222" strokeWidth="2.5" />
+              {/* Dots */}
+              {data.map((d, i) =>
+                <circle
+                  key={i}
+                  cx={padding + i * xStep}
+                  cy={yScale(d)}
+                  r="4"
+                  fill="#0984e3"
+                />
+              )}
+              {/* X axis (months) */}
+              {months.map((m, i) => (
+                <text
+                  key={m}
+                  x={padding + i * xStep}
+                  y={height - 8}
+                  fontSize="11"
+                  fill="#666"
+                  textAnchor="middle"
+                >{m}</text>
+              ))}
+            </svg>
+          </div>
+        );
+      }
+
+      function ExpensesChart() {
+        // Example expenses
+        const expenses = [22000, 31000, 27000, 34000, 40000];
+        const width = 220;
+        const height = 140;
+        const barWidth = 32;
+        const padding = 28;
+        const maxY = 42000;
+
+        return (
+          <div>
+            <div className="chart-title">Expenses</div>
+            <svg width={width} height={height} className="chart-svg">
+              {/* Bars */}
+              {expenses.map((val, i) => {
+                const h = ((val / maxY) * (height - 2*padding));
+                return (
+                  <rect
+                    key={i}
+                    x={padding + i*(barWidth + 12)}
+                    y={height - padding - h}
+                    width={barWidth}
+                    height={h}
+                    fill="#aaa"
+                    rx="6"
+                  />
+                );
+              })}
+            </svg>
+          </div>
+        );
+      }
+
+      function Reports() {
+        return (
+          <div className="container">
+            <h1>REPORTS</h1>
+            <div className="grid">
+              <div className="chart">
+                <SalesChart />
+              </div>
+              <div className="chart">
+                <ExpensesChart />
+              </div>
+            </div>
+            <table className="summary-table">
+              <tbody>
+                <tr>
+                  <th>Income</th>
+                  <th>Expenses</th>
+                  <th>Profit</th>
+                  <th>Tax</th>
+                </tr>
+                <tr>
+                  <td>$120,000</td>
+                  <td>$50,000</td>
+                  <td>$70,000</td>
+                  <td>$21,000</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style={{fontSize: "1.25rem", fontWeight: "600", marginBottom: "8px"}}>Recent Activity</div>
+            <table className="activity-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>08/25/2023</td>
+                  <td>Payment Received</td>
+                  <td>$5,000</td>
+                </tr>
+                <tr>
+                  <td>08/22/2023</td>
+                  <td>Invoice Sent</td>
+                  <td>$12,000</td>
+                </tr>
+                <tr>
+                  <td>08/20/2023</td>
+                  <td>Expense Added</td>
+                  <td>$3,000</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<Reports />);
+    </script>
+  </body>
+</html>

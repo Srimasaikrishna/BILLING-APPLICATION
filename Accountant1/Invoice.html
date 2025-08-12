@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Invoice Management</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+    }
+    /* Sidebar */
+    .sidebar {
+        width: 200px;
+        background: #f0f0f0;
+        height: 100vh;
+        padding-top: 20px;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+    .sidebar h3 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .sidebar a {
+        display: block;
+        padding: 10px 15px;
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+    }
+    .sidebar a:hover, .sidebar a.active {
+        background-color:white;
+        color: #007bff;
+        font-weight: bold;
+    }
+    /* Main content */
+    .main {
+        flex: 1;
+        padding: 20px;
+    }
+    /* Top bar */
+    .top-bar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 10px;
+    }
+    .back-btn {
+        padding: 8px 14px;
+        background: #555;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    /* Table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+    table, th, td {
+        border: 1px solid #ccc;
+    }
+    th, td {
+        padding: 8px;
+        text-align: center;
+    }
+    th {
+        background: #f7f7f7;
+    }
+    /* Buttons */
+    .generate-btn {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+    .edit-btn {
+        background: #007BFF;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .delete-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 5px;
+    }
+    /* Status colors */
+    .status-P { color: green; font-weight: bold; }
+    .status-U { color: red; font-weight: bold; }
+    .status-OD { color: #c7a100; font-weight: bold; }
+    .status-PP { color: orange; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h3>Billing</h3>
+    <!-- NEW Dashboard Link -->
+    <a href="dashboard.html">Accountant Dashboard</a>
+    <a href="#">Manage Customers</a>
+    <a href="#" class="active">Invoices</a>
+    <a href="#">Payments</a>
+    <a href="#">Reports</a>
+    <a href="#">Profile</a>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+    <!-- Top bar -->
+    <div class="top-bar">
+        <button class="back-btn" onclick="history.back()">Back</button>
+    </div>
+
+    <h2>Invoice Management</h2>
+    <button class="generate-btn">+ Generate Invoice</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Invoice No.</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>INV021</td>
+                <td>Pranay</td>
+                <td>1/08/2025</td>
+                <td>40,000</td>
+                <td class="status-P">P</td>
+                <td>
+                    <button class="edit-btn">Edit</button>
+                    <button class="delete-btn">Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>INV0213</td>
+                <td>Prabhas</td>
+                <td>1/08/2025</td>
+                <td>20,000</td>
+                <td class="status-U">U</td>
+                <td>
+                    <button class="edit-btn">Edit</button>
+                    <button class="delete-btn">Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>INV0214</td>
+                <td>Sai Krishna</td>
+                <td>1/08/2025</td>
+                <td>30,000</td>
+                <td class="status-OD">OD</td>
+                <td>
+                    <button class="edit-btn">Edit</button>
+                    <button class="delete-btn">Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>INV0216</td>
+                <td>Pratap</td>
+                <td>1/08/2025</td>
+                <td>40,000</td>
+                <td class="status-PP">PP</td>
+                <td>
+                    <button class="edit-btn">Edit</button>
+                    <button class="delete-btn">Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td>INV02118</td>
+                <td>Swapna</td>
+                <td>1/08/2025</td>
+                <td>30,000</td>
+                <td class="status-PP">PP</td>
+                <td>
+                    <button class="edit-btn">Edit</button>
+                    <button class="delete-btn">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Example JS for handling button clicks
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => alert('Edit action clicked'));
+    });
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if(confirm('Are you sure you want to delete this invoice?')){
+                alert('Invoice deleted');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
