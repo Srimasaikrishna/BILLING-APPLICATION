@@ -1,0 +1,74 @@
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 28px;
+  background-color: #f5f5f5;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-logo {
+  height: 40px;
+}
+
+.header-title {
+  color: #1888A3;
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.profile-icon {
+  border-radius: 50%;
+  background-color: #d2dbe0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+
+.username-text {
+  font-weight: 500;
+}
+
+.button-pill {
+  border: none;
+  border-radius: 22px;
+  padding: 8px 22px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 0 7px rgba(0,0,0,0.07);
+  transition: background-color 0.3s ease;
+}
+
+.button-home {
+  background-color: #21b0c0;
+  color: #fff;
+}
+
+.button-home:hover {
+  background-color: #198a96;
+}
+
+.button-logout {
+  background-color: #222;
+  color: #fff;
+}
+
+.button-logout:hover {
+  filter: brightness(0.85);
+}
