@@ -1,11 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Login.css";
+import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 const Login = () => {
+  let user=useRef()
+    let password=useRef()
+
+    let navigate=useNavigate()
   function login(e){
         e.preventDefault()
-        user.current.value==='Accountant' && pass.current.value==='Accoutant123' ? navigate('accountant') : navigate('login')
+        user.current.value==='Admin' && password.current.value==='Admin123' ? navigate('admindashboard') : user.current.value==='accountant' && password.current.value==='Accountant123' ? navigate('accountant') : navigate('/')
     }
   return (
     <>

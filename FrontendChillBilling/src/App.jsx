@@ -11,12 +11,15 @@ import Reports from './pages/Reports';
 import AddCustomer from './pages/AddCustomer';
 import GenerateInvoice from './pages/GenerateInvoice';
 import RecordPayment from './pages/RecordPayment';
+import Login from "./pages/Login";
+import Accountant from "./pages/Accountant";
 
 function App() {
   return (
     <Router>
       <Routes>
-  <Route path="/" element={<Dashboard />}>
+  <Route path="/" element={<Login />}>
+   <Route path="admindashboard" element={<Dashboard />} />
     <Route index element={<Welcome />} />
     <Route path="user-management" element={<UserManagement />} />
     <Route path="customer-management" element={<Customers />} />
@@ -27,6 +30,7 @@ function App() {
     <Route path="add-customer" element={<AddCustomer />} />
     <Route path="generate-invoice" element={<GenerateInvoice />} />
     <Route path="record-payment" element={<RecordPayment />} />
+     <Route path="accountant" element={<Accountant />} />
   </Route>
 </Routes>
 
