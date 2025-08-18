@@ -18,9 +18,8 @@ function App() {
   return (
     <Router>
       <Routes>
-  <Route path="/" element={<Login />}>
+  <Route path="/" element={<Login />}/>
    <Route path="admindashboard" element={<Dashboard />} />
-    <Route index element={<Welcome />} />
     <Route path="user-management" element={<UserManagement />} />
     <Route path="customer-management" element={<Customers />} />
     <Route path="product-catalog" element={<ProductCatalog />} />
@@ -31,7 +30,7 @@ function App() {
     <Route path="generate-invoice" element={<GenerateInvoice />} />
     <Route path="record-payment" element={<RecordPayment />} />
      <Route path="accountant" element={<Accountant />} />
-  </Route>
+  
 </Routes>
 
       

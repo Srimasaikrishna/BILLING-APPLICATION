@@ -1,8 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import "./Login.css";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import logo from '../assets/logo2.jpg'
 
 
 const Login = () => {
@@ -12,61 +13,63 @@ const Login = () => {
     let navigate=useNavigate()
   function login(e){
         e.preventDefault()
-        user.current.value==='Admin' && password.current.value==='Admin123' ? navigate('admindashboard') : user.current.value==='accountant' && password.current.value==='Accountant123' ? navigate('accountant') : navigate('/')
+        if(user.current.value==="admin" && password.current.value==="admin123"){
+          navigate("admindashboard")
+        }
+        else if(user.current.value==="accountant" && password.current.value==="accountant123"){
+          navigate("accountant")
+        }
+        else{
+          navigate("/")
+        }
     }
   return (
     <>
       {/* Navbar */}
       <nav className="navbar">
-        <div className="logo">
-          Billing <br /> App
-        </div>
+        <div><img className="logo" src={logo} alt="logo not found" /></div>
         <div className="nav-links">
-          <Link to="/">Home</Link>
+          <a href="/">About Us</a>
           <span>|</span>
-          <Link to="/about">About Us</Link>
-          <span>|</span>
-          <Link to="/register">
-            <button className="signup-btn">Sign Up</button>
-          </Link>
+          <a href="/signup" className="signup-btn">Sign up</a>
         </div>
       </nav>
 
-      {/* Login Form */} 
+      {/* Login Form */}
       <div className="login-container">
-        <h1>Welcome Back</h1>
-        <form>
-          <label>Email / Username:</label>
-          <input type="text" placeholder="Enter your email or username" required ref={user} />
-
-          <label>Password:</label>
-          <input type="password" placeholder="Enter your password" required  ref={password}/>
-
+        <h1>Welcome back</h1>
+        <form onSubmit={login}>
+          <label>Enter Email address or Username:</label>
+          <input
+            type="text"
+            required
+            ref={user}
+          />
+          <label>Enter Password:</label>
+          <input
+            type="password"
+            required
+            ref={password}
+          />
           <div className="options">
-            <Link to="/forgot-password" className="forgot">
-              Forgot Password?
-            </Link>
+            <a href="/forgot-password" className="forgot">Forgot Password?</a>
           </div>
-                  
-          <button type="submit" className="login-btn" onClick={login} >
-            Login 
-          </button>
+          <button type="submit" className="login-btn">Login</button>
         </form>
-
         <p className="create-account">
-          Don’t have an account?{" "}
-          <Link to="/register">Create New Account</Link>
+          Don’t have an account? <a href="/register">Create New Account</a>
         </p>
       </div>
 
       {/* Footer */}
       <footer>
-        <p>© All rights reserved | Group 4</p>
+        <p>© All copy rights are reserved to group 4</p>
         <div className="contact">
-          <span>📞+91 9999999999</span>
+          <span>📞 +91 9999999999</span>
           <span>📧 abc@gmail.com</span>
         </div>
       </footer>
+      <Outlet />
     </>
   );
 };

@@ -8,51 +8,55 @@
 
 /* Navbar */
 .navbar {
-  background: #1e3c72;
-  color: #fff;
-  padding: 15px 30px;
+  background: #ebe5e5;
+  color: #333;
+  padding: 5px 70px 5px 100px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
-  font-size: 22px;
-  font-weight: bold;
-  line-height: 1.2;
+  height: 80px;
+  width: 64px;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 30px;
+  padding: 5px 5px 5px 20px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 50px;
 }
 
 .nav-links a {
-  color: #fff;
+  color: #333;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 14px;
 }
 
-.signup-btn {
-  background: #ffb703;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-weight: bold;
+.nav-links .signup-btn {
+  background-color: #000;
+  color: #fff;
+  padding: 8px 16px 6px 16px;
+  border-radius: 20px;
+  font-weight: 400;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background 0.3s;
 }
 
-.signup-btn:hover {
-  background: #fb8500;
+.nav-links .signup-btn:hover {
+  background-color: #0056b3;
 }
 
-/* Login Container */
+/* Login Form Container */
 .login-container {
-  max-width: 400px;
+  max-width: 450px;
   margin: 50px auto;
-  background: #f9f9f9;
+  background: #fff;
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -60,32 +64,34 @@
 }
 
 .login-container h1 {
+  color: #333;
   margin-bottom: 20px;
-  color: #1e3c72;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
 }
 
 label {
   text-align: left;
   font-size: 14px;
   font-weight: bold;
+  color: #555;
 }
 
 input {
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 30px;
+  font-size: 16px;
   outline: none;
   transition: border 0.3s;
 }
 
 input:focus {
-  border-color: #1e3c72;
+  border-color: #007bff;
 }
 
 .options {
@@ -93,49 +99,66 @@ input:focus {
 }
 
 .forgot {
-  font-size: 13px;
+  font-size: 14px;
+  color: #007bff;
   text-decoration: none;
-  color: #1e3c72;
+}
+
+.forgot:hover {
+  text-decoration: underline;
 }
 
 .login-btn {
-  background: #1e3c72;
-  color: #fff;
+  background-color: #000;
+  color: white;
+  padding: 12px;
   border: none;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
+  border-radius: 30px;
   font-size: 16px;
-  transition: 0.3s;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
 .login-btn:hover {
-  background: #3a5ba0;
+  background-color: #0056b3;
 }
 
 .create-account {
-  margin-top: 15px;
+  margin-top: 20px;
   font-size: 14px;
 }
 
 .create-account a {
-  color: #fb8500;
+  color: #007bff;
   font-weight: bold;
   text-decoration: none;
 }
 
+.create-account a:hover {
+  text-decoration: underline;
+}
+
 /* Footer */
 footer {
-  margin-top: 50px;
-  background: #1e3c72;
-  color: #fff;
+  margin-top: 40px;
+  background-color: #f1f1f1;
+  color: #333;
   padding: 15px;
   text-align: center;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 70px 5px 100px;
 }
 
 footer .contact {
-  margin-top: 8px;
+  font-size: 14px;
   display: flex;
   flex-direction: column;
   gap: 5px;
+}
+
+footer .contact span {
+  color: #333;
 }
