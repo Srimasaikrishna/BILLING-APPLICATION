@@ -22,7 +22,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
     
-    public Long findUserId(String email) {
+    public Long findUserIdByEmail(String email) {
     	User existingUser = userRepository.findByEmailId(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
     	return existingUser.getUserId();
