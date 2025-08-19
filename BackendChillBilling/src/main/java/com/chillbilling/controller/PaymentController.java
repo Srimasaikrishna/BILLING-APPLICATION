@@ -7,7 +7,6 @@ import com.chillbilling.entity.User;
 import com.chillbilling.service.PaymentService;
 import com.chillbilling.service.UserService;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;

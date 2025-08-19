@@ -3,14 +3,11 @@ package com.chillbilling.service;
 import com.chillbilling.dto.InvoiceRequest;
 import com.chillbilling.dto.PaymentRecord;
 import com.chillbilling.entity.Invoice;
-import com.chillbilling.entity.InvoiceItem;
-import com.chillbilling.entity.Product;
 import com.chillbilling.entity.User;
 import com.chillbilling.entity.Payment;
 import com.chillbilling.exception.BusinessException;
 import com.chillbilling.exception.ResourceNotFoundException;
 import com.chillbilling.repository.InvoiceRepository;
-import com.chillbilling.repository.ProductRepository;
 import com.chillbilling.repository.UserRepository;
 
 import org.springframework.stereotype.Service;
@@ -18,10 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -29,18 +24,15 @@ public class InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
     private final UserRepository userRepository;
-    private final ProductRepository productRepository;
     private final InvoiceItemService invoiceItemService;
     private final PaymentService paymentService;
 
     public InvoiceService(InvoiceRepository invoiceRepository,
                           UserRepository userRepository,
-                          ProductRepository productRepository,
                           InvoiceItemService invoiceItemService,
                           PaymentService paymentService) {
         this.invoiceRepository = invoiceRepository;
         this.userRepository = userRepository;
-        this.productRepository = productRepository;
         this.invoiceItemService = invoiceItemService;
         this.paymentService = paymentService;
     }
