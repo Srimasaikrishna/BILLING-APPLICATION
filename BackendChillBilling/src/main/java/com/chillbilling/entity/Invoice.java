@@ -46,6 +46,12 @@ public class Invoice {
 
     @Column(nullable = false)
     private Double totalAmount;
+    
+    @Column(nullable = false)
+    private Double paidAmount = 0.0;
+
+    @Column(nullable = false)
+    private Double balance = 0.0;
 
     @CreatedDate
     @Column(updatable = false, nullable = false)

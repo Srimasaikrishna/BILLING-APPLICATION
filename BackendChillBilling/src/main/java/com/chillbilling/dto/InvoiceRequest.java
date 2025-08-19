@@ -1,0 +1,43 @@
+package com.chillbilling.dto;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+@Data
+public class InvoiceRequest {
+	
+	@Email(message = "Invalid email format")
+    @NotBlank(message = "Customer email is required")
+    private String customerEmail;
+	
+	@NotNull(message = "Due date is required")
+    private LocalDate dueDate;
+	
+    @NotNull(message = "Paid amount must be provided")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Paid amount cannot be negative")
+    private Double paidAmount;
+    
+    @NotEmpty(message = "At least one item is required")
+    @Valid
+    private List<ItemRequest> items;
+
+    @Data
+    public static class ItemRequest {
+    	
+        @NotBlank(message = "Product name is required")
+        private String productName;
+        
+        @NotNull(message = "Quantity is required")
+        @Min(value = 1, message = "Quantity must be at least 1")
+        private Integer quantity;
+    }
+}

@@ -1,0 +1,54 @@
+package com.chillbilling.controller;
+
+import com.chillbilling.dto.ProductNameRequest;
+import com.chillbilling.entity.Product;
+import com.chillbilling.service.ProductService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/products")
+public class ProductController {
+
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping
+    public Product addProduct(@RequestBody Product product) {
+        return productService.addProduct(product);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping
+    public Product updateProduct(@RequestBody Product product) {
+        return productService.updateProductByName(product);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/by-name")
+    public Product getProductByName(@RequestBody ProductNameRequest request) {
+        String productName = request.getProductName();
+        Long productId = productService.findProductIdByName(productName);
+        return productService.getProductById(productId);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public List<Product> getAllProducts() {
+        return productService.getAllProducts();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping
+    public void deleteProduct(@RequestBody ProductNameRequest request) {
+        String productName = request.getProductName();
+        Long productId = productService.findProductIdByName(productName);
+        productService.deleteProduct(productId);
+    }
+}

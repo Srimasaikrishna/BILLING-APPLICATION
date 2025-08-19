@@ -1,0 +1,16 @@
+package com.chillbilling.dto;
+
+import com.chillbilling.entity.Payment;
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+@Data
+public class PaymentRecord {
+    private String invoiceNumber;
+    private Double amount;
+    private Payment.Method method;
+    private Payment.Status status;
+    private String transactionId;
+    private LocalDateTime paymentDate;
+}
