@@ -174,7 +174,6 @@ export default function ProductCatalog() {
           padding: "24px",
         }}>
           <h4 style={{ marginTop: 0, marginBottom: "12px", fontSize: "18px", color: "#1888A3", fontWeight: "700" }}>Filter Products/Services</h4>
-          
           <div style={{ marginBottom: "18px" }}>
             <label style={{ fontWeight: "600", marginRight: "9px" }}>Type:</label>
             <select
@@ -248,7 +247,6 @@ export default function ProductCatalog() {
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "18px" }}>
         <thead>
           <tr>
-            <th style={thStyle}>Id</th>
             <th style={thStyle}>Name</th>
             <th style={thStyle}>Type</th>
             <th style={thStyle}>Price</th>
@@ -259,7 +257,6 @@ export default function ProductCatalog() {
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
               <tr key={product.id} style={{ borderBottom: "1.5px solid #e4e4e4", textAlign: "center" }}>
-                <td style={tdStyle}>{product.id}</td>
                 <td style={tdStyle}>
                   {editingId === product.id ? (
                     <input
@@ -315,7 +312,7 @@ export default function ProductCatalog() {
             ))
           ) : (
             <tr>
-              <td colSpan="5" style={{ textAlign: "center", padding: "20px", color: "#999" }}>
+              <td colSpan="4" style={{ textAlign: "center", padding: "20px", color: "#999" }}>
                 No products/services found
               </td>
             </tr>
@@ -363,10 +360,10 @@ export default function ProductCatalog() {
           </form>
         </div>
       )}
-
     </div>
   );
 }
+
 
 const thStyle = {
   padding: "12px 0",
