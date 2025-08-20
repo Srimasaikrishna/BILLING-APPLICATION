@@ -3,6 +3,8 @@ package com.chillbilling.controller;
 import com.chillbilling.dto.EmailRequest;
 import com.chillbilling.entity.User;
 import com.chillbilling.service.UserService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +27,14 @@ public class UserController {
         return userService.registerCustomer(user);
     }
 
-    // ADMIN: Manage all users
+    // ADMIN: Manage all users 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public User addUser(@RequestBody User user) {
-        return userService.addUser(user);
+    public ResponseEntity<String> addUser(@RequestBody User user) {
+        userService.addUser(user);
+        return ResponseEntity.ok("User registered successfully");
     }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
@@ -46,22 +50,25 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
-    public User updateUserByAdmin(@RequestBody User updatedUser) {
-        return userService.updateUser(updatedUser);
+    public ResponseEntity<String> updateUserByAdmin(@RequestBody User updatedUser) {
+        userService.updateUser(updatedUser);
+        return ResponseEntity.ok("User updated successfully");
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping
-    public void deleteUserByEmail(@RequestBody EmailRequest request) {
+    public ResponseEntity<String> deleteUserByEmail(@RequestBody EmailRequest request) {
         userService.deleteUserByEmail(request.getEmail());
+        return ResponseEntity.ok("User deleted successfully");
     }
 
     // ACCOUNTANT: Manage only customers
     @PreAuthorize("hasRole('ACCOUNTANT')")
     @PostMapping("/customers")
-    public User createCustomer(@RequestBody User user) {
+    public ResponseEntity<String> createCustomer(@RequestBody User user) {
         user.setRole(User.Role.CUSTOMER);
-        return userService.addUser(user);
+        userService.addUser(user);
+        return ResponseEntity.ok("Customer created successfully");
     }
 
     @PreAuthorize("hasRole('ACCOUNTANT')")
@@ -78,28 +85,32 @@ public class UserController {
 
     @PreAuthorize("hasRole('ACCOUNTANT')")
     @PutMapping("/customers")
-    public User updateCustomer(@RequestBody User updatedUser) {
-        return userService.updateCustomer(updatedUser);
+    public ResponseEntity<String> updateCustomer(@RequestBody User updatedUser) {
+        userService.updateCustomer(updatedUser);
+        return ResponseEntity.ok("Customer updated successfully");
     }
 
     @PreAuthorize("hasRole('ACCOUNTANT')")
     @DeleteMapping("/customers")
-    public void deleteCustomerByEmail(@RequestBody EmailRequest request) {
+    public ResponseEntity<String> deleteCustomerByEmail(@RequestBody EmailRequest request) {
         userService.deleteCustomerByEmail(request.getEmail());
+        return ResponseEntity.ok("Customer deleted successfully");
     }
 
     // CUSTOMER: Self service
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/me")
     public User getMyProfile(Authentication auth) {
-        return userService.getUserByEmail(auth.getName());
+    	String email = auth.getName();
+        return userService.getUserByEmail(email);
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @PutMapping("/me")
-    public User updateMyProfile(@RequestBody User updatedUser, Authentication auth) {
+    public ResponseEntity<String> updateMyProfile(@RequestBody User updatedUser, Authentication auth) {
         User loggedInUser = userService.getUserByIdentifier(auth.getName());
         updatedUser.setEmailId(loggedInUser.getEmailId());
-        return userService.updateCustomer(updatedUser);
+        userService.updateCustomer(updatedUser);
+        return ResponseEntity.ok("Profile updated successfully");
     }
 }

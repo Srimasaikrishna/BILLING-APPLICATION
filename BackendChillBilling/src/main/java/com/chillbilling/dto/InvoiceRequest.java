@@ -3,6 +3,9 @@ package com.chillbilling.dto;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.chillbilling.validation.OnCreate;
+import com.chillbilling.validation.OnUpdate;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
@@ -15,8 +18,11 @@ import lombok.Data;
 @Data
 public class InvoiceRequest {
 	
-	@Email(message = "Invalid email format")
-    @NotBlank(message = "Customer email is required")
+	@NotBlank(message = "Invoice number is required", groups = OnUpdate.class)
+    private String invoiceNumber;
+	
+	@Email(message = "Invalid email format", groups = OnCreate.class)
+    @NotBlank(message = "Customer email is required", groups = OnCreate.class)
     private String customerEmail;
 	
 	@NotNull(message = "Due date is required")

@@ -59,7 +59,11 @@ public class SecurityConfig {
             .exceptionHandling(eh -> eh.authenticationEntryPoint(unauthorizedHandler()))
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints
-                .requestMatchers("/api/auth/login").permitAll()
+                .requestMatchers("/api/auth/login",
+                		"/api/auth/register",
+                        "/api/auth/verify",
+                        "/api/auth/forgot-password",
+                        "/api/auth/reset-password").permitAll()
 
                 // (Optional) allow actuator/health if you use it:
                 //.requestMatchers("/actuator/health").permitAll()

@@ -71,12 +71,11 @@ public class InvoiceItemService {
         Invoice invoice = invoiceRepository.findByInvoiceNumber(invoiceNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Invoice not found: " + invoiceNumber));
 
-        // Clear existing items
-        invoiceItemRepository.deleteAll(invoice.getItems());
-
         double totalAmount = 0.0;
-        List<InvoiceItem> newItems = new ArrayList<>();
 
+        // Clear existing items
+        invoice.getItems().clear();
+        
         for (InvoiceRequest.ItemRequest itemReq : itemsRequest) {
             Product product = productRepository.findByProductName(itemReq.getProductName())
                     .orElseThrow(() -> new ResourceNotFoundException(
@@ -91,11 +90,10 @@ public class InvoiceItemService {
             item.setUnitPrice(product.getPrice());
             item.setTotalPrice(lineTotal);
 
-            newItems.add(item);
+            invoice.getItems().add(item);
             totalAmount += lineTotal;
         }
 
-        invoice.setItems(newItems);
         invoice.setTotalAmount(totalAmount);
         invoice.setBalance(totalAmount - invoice.getPaidAmount());
 

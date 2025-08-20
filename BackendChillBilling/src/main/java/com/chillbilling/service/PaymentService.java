@@ -24,6 +24,13 @@ public class PaymentService {
         this.paymentRepository = paymentRepository;
         this.invoiceRepository = invoiceRepository;
     }
+    
+    public boolean invoiceBelongsToCustomer(String invoiceNumber, String customerEmail) {
+        return invoiceRepository.findByInvoiceNumber(invoiceNumber)
+                .map(invoice -> invoice.getCustomer().getEmailId().equals(customerEmail))
+                .orElse(false);
+    }
+
 
     public Payment recordPayment(PaymentRecord record) {
         // Find invoice

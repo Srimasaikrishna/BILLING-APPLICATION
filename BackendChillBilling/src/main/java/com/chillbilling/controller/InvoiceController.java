@@ -1,14 +1,19 @@
 package com.chillbilling.controller;
 
+import com.chillbilling.dto.InvoiceNumberRequest;
 import com.chillbilling.dto.InvoiceRequest;
 import com.chillbilling.entity.Invoice;
 import com.chillbilling.service.InvoiceService;
+import com.chillbilling.validation.OnCreate;
+import com.chillbilling.validation.OnUpdate;
 
 import jakarta.validation.Valid;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,27 +30,33 @@ public class InvoiceController {
 
     @PreAuthorize("hasAnyRole('ADMIN','ACCOUNTANT')")
     @PostMapping
-    public Invoice createInvoice(@Valid @RequestBody InvoiceRequest request) {
-        return invoiceService.createInvoice(request);
+    public ResponseEntity<String> createInvoice(@Validated(OnCreate.class) @RequestBody InvoiceRequest request) {
+        invoiceService.createInvoice(request);
+        return ResponseEntity.ok("Invoice generated successfully");
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','ACCOUNTANT')")
-    @PutMapping("/{invoiceNumber}")
-    public Invoice updateInvoice(@PathVariable String invoiceNumber, @Valid
-                                 @RequestBody InvoiceRequest request) {
-        return invoiceService.updateInvoice(invoiceNumber, request);
+    @PutMapping
+    public ResponseEntity<String> updateInvoice(@Validated(OnUpdate.class) @RequestBody InvoiceRequest request) {
+        invoiceService.updateInvoice(request);
+        return ResponseEntity.ok("Invoice updated successfully");
     }
 
-    @PreAuthorize("hasRole('ADMIN', 'ACCOUNTANT')")
-    @DeleteMapping("/{invoiceNumber}")
-    public void deleteInvoice(@PathVariable String invoiceNumber) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
+    @DeleteMapping
+    public ResponseEntity<String> deleteInvoice(@RequestBody InvoiceNumberRequest invoiceNumberRequest) {
+    	String invoiceNumber=invoiceNumberRequest.getInvoiceNumber();
         invoiceService.deleteInvoice(invoiceNumber);
+        return ResponseEntity.ok("Invoice deleted successfully");
     }
 
 
     @PreAuthorize("hasAnyRole('ADMIN','ACCOUNTANT','CUSTOMER')")
-    @GetMapping("/{invoiceNumber}")
-    public Invoice getInvoice(@PathVariable String invoiceNumber, Authentication auth) {
+    @PostMapping("/by-invoice-number")
+    public Invoice getInvoice(@RequestBody InvoiceNumberRequest invoiceNumberRequest, Authentication auth) {
+    	
+    	String invoiceNumber=invoiceNumberRequest.getInvoiceNumber();
+
         Invoice invoice = invoiceService.getInvoice(invoiceNumber);
 
         // If logged-in user is a CUSTOMER, enforce ownership check

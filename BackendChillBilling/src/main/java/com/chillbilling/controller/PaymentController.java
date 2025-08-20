@@ -7,6 +7,9 @@ import com.chillbilling.entity.User;
 import com.chillbilling.service.PaymentService;
 import com.chillbilling.service.UserService;
 
+import jakarta.validation.Valid;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +31,9 @@ public class PaymentController {
     // Record a payment (ADMIN or ACCOUNTANT)
     @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
     @PostMapping
-    public Payment recordPayment(@RequestBody PaymentRecord record) {
-        return paymentService.recordPayment(record);
+    public ResponseEntity<String> recordPayment(@Valid @RequestBody PaymentRecord record) {
+        paymentService.recordPayment(record);
+        return ResponseEntity.ok("Payment recorded successfully");
     }
 
     // Get all payments (ADMIN or ACCOUNTANT)
@@ -53,5 +57,23 @@ public class PaymentController {
         User loggedInUser = userService.getUserByIdentifier(auth.getName());
         String email = loggedInUser.getEmailId();
         return paymentService.getPaymentsByCustomerEmail(email);
+    }
+    
+    // Customer fetch payments for specific invoice belongs to same customer
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @PostMapping("/my-invoice-payments")
+    public List<Payment> getMyPaymentsByInvoiceNumber(
+            Authentication auth,
+            @RequestBody InvoiceNumberRequest request
+    ) {
+        User loggedInUser = userService.getUserByIdentifier(auth.getName());
+        String invoiceNumber = request.getInvoiceNumber();
+
+        boolean ownsInvoice = paymentService.invoiceBelongsToCustomer(invoiceNumber, loggedInUser.getEmailId());
+        if (!ownsInvoice) {
+            throw new SecurityException("You are not authorized to view payments for this invoice.");
+        }
+
+        return paymentService.getPaymentsByInvoiceNumber(invoiceNumber);
     }
 }

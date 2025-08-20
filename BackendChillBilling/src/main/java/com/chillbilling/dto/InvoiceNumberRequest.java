@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class InvoiceNumberRequest {
 
-	private String InvoiceNumber;
+	private String invoiceNumber;
 }

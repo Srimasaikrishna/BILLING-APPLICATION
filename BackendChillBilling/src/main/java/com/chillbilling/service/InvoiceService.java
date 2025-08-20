@@ -75,7 +75,11 @@ public class InvoiceService {
     }
 
     // Update invoice
-    public Invoice updateInvoice(String invoiceNumber, InvoiceRequest request) {
+    public Invoice updateInvoice(InvoiceRequest request) {
+    	
+    	
+        String invoiceNumber = request.getInvoiceNumber();
+        
         Invoice invoice = invoiceRepository.findByInvoiceNumber(invoiceNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Invoice not found: " + invoiceNumber));
 
@@ -105,7 +109,7 @@ public class InvoiceService {
             record.setAmount(paymentDifference);
             record.setStatus(Payment.Status.SUCCESS);
             record.setMethod(Payment.Method.CASH);
-            record.setTransactionId("");
+            record.setTransactionId(null);
             record.setPaymentDate(LocalDateTime.now());
 
             paymentService.recordPayment(record);

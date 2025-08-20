@@ -11,7 +11,7 @@ import io.jsonwebtoken.JwtParser;
 @Service
 public class TokenService {
 
-    private final String SECRET_KEY = "SuperSecretJWTKey123!";
+    private final String SECRET_KEY = "SuperSecretJWTIsModifiedtoMinimum32Characters";
     private final long EXPIRATION_MS = 3600000; // 1 hour
 
     @SuppressWarnings("deprecation")
@@ -21,7 +21,8 @@ public class TokenService {
                 .claim("role", user.getRole().name())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
+
                 .compact();
     }
     

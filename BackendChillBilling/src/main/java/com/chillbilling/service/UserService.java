@@ -128,11 +128,18 @@ public class UserService {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new BusinessException("Username is already taken.");
         }
-        if (userRepository.findByPhoneNumber(user.getPhoneNumber()).isPresent()) {
-            throw new BusinessException("Phone number is already registered.");
+        
+        String phone = user.getPhoneNumber();
+        if (phone == null || phone.isBlank()) {
+            throw new BusinessException("Phone number is required.");
         }
-        if (!user.getPhoneNumber().matches("\\d{10}")) {
+
+        if (!phone.matches("\\d{10}")) {
             throw new BusinessException("Phone number must be exactly 10 digits.");
+        }
+
+        if (userRepository.findByPhoneNumber(phone).isPresent()) {
+            throw new BusinessException("Phone number is already registered.");
         }
     }
     
