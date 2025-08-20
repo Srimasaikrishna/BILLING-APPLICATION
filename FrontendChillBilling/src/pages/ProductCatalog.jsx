@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const initialProducts = [
   { id: 1, name: "Laptop", type: "Product", price: 55000 },
@@ -9,6 +10,7 @@ const initialProducts = [
 ];
 
 export default function ProductCatalog() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState(initialProducts);
   const [search, setSearch] = useState("");
   const [showFilter, setShowFilter] = useState(false);
@@ -18,14 +20,10 @@ export default function ProductCatalog() {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({ name: "", type: "", price: "" });
 
-  // For adding new product/service (popup modal)
-  const [adding, setAdding] = useState(false);
-  const [addForm, setAddForm] = useState({ name: '', type: '', price: '' });
-
   // Filter products by search, type and price
   const filteredProducts = products.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) ||
-                         p.type.toLowerCase().includes(search.toLowerCase());
+      p.type.toLowerCase().includes(search.toLowerCase());
     const matchesType = !filterType || p.type === filterType;
     const matchesMin = minPrice === "" || p.price >= Number(minPrice);
     const matchesMax = maxPrice === "" || p.price <= Number(maxPrice);
@@ -63,11 +61,14 @@ export default function ProductCatalog() {
     }
   }
 
-  // Add product handlers (modal)
+  // Add product handlers
   function handleAddClick() {
     setAdding(true);
     setAddForm({ name: '', type: '', price: '' });
   }
+
+  const [adding, setAdding] = useState(false);
+  const [addForm, setAddForm] = useState({ name: '', type: '', price: '' });
 
   function handleAddChange(e) {
     const { name, value } = e.target;
@@ -108,21 +109,38 @@ export default function ProductCatalog() {
           fontWeight: "700",
           color: "#1888A3"
         }}>Product/Service Catalog</h2>
-        <button
-          style={{
-            background: "#111",
-            color: "#fff",
-            fontWeight: "600",
-            border: "none",
-            borderRadius: "22px",
-            padding: "10px 38px",
-            fontSize: "16px",
-            cursor: "pointer"
-          }}
-          onClick={handleAddClick}
-        >
-          Add product/Service
-        </button>
+        <div style={{ display: "flex", gap: "16px" }}>
+          <button
+            onClick={() => navigate("/admindashboard")} // Back button goes to dashboard
+            style={{
+              background: "#111",
+              color: "#fff",
+              border: "none",
+              borderRadius: "22px",
+              padding: "10px 32px",
+              fontWeight: "600",
+              fontSize: "16px",
+              cursor: "pointer"
+            }}
+          >
+            Back
+          </button>
+          <button
+            style={{
+              background: "#111",
+              color: "#fff",
+              fontWeight: "600",
+              border: "none",
+              borderRadius: "22px",
+              padding: "10px 38px",
+              fontSize: "16px",
+              cursor: "pointer"
+            }}
+            onClick={handleAddClick}
+          >
+            Add product/Service
+          </button>
+        </div>
       </div>
 
       {/* Search and Filter row */}
@@ -179,7 +197,7 @@ export default function ProductCatalog() {
             <select
               value={filterType}
               onChange={e => setFilterType(e.target.value)}
-              style={{ padding: "7px 17px", borderRadius: "8px", border: "1px solid #ccc" }}
+              style={{ padding: "7px 17px", borderRadius: "8px", border: "1px solid #ccc", width: "100%" }}
             >
               <option value="">All</option>
               <option value="Product">Product</option>
@@ -193,7 +211,7 @@ export default function ProductCatalog() {
               value={minPrice}
               onChange={e => setMinPrice(e.target.value)}
               placeholder="Min price"
-              style={{ padding: "7px 17px", borderRadius: "8px", border: "1px solid #ccc", width: "100px" }}
+              style={{ padding: "7px 17px", borderRadius: "8px", border: "1px solid #ccc", width: "100%" }}
             />
           </div>
           <div style={{ marginBottom: "18px" }}>
@@ -203,7 +221,7 @@ export default function ProductCatalog() {
               value={maxPrice}
               onChange={e => setMaxPrice(e.target.value)}
               placeholder="Max price"
-              style={{ padding: "7px 17px", borderRadius: "8px", border: "1px solid #ccc", width: "100px" }}
+              style={{ padding: "7px 17px", borderRadius: "8px", border: "1px solid #ccc", width: "100%" }}
             />
           </div>
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "9px" }}>
@@ -254,63 +272,41 @@ export default function ProductCatalog() {
           </tr>
         </thead>
         <tbody>
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => (
-              <tr key={product.id} style={{ borderBottom: "1.5px solid #e4e4e4", textAlign: "center" }}>
-                <td style={tdStyle}>
-                  {editingId === product.id ? (
-                    <input
-                      name="name"
-                      value={editForm.name}
-                      onChange={handleEditChange}
-                      style={inputEditStyle}
-                      placeholder="Name"
-                    />
-                  ) : product.name}
-                </td>
-                <td style={tdStyle}>
-                  {editingId === product.id ? (
-                    <select
-                      name="type"
-                      value={editForm.type}
-                      onChange={handleEditChange}
-                      style={inputEditStyle}
-                    >
-                      <option value="Product">Product</option>
-                      <option value="Service">Service</option>
-                    </select>
-                  ) : product.type}
-                </td>
-                <td style={tdStyle}>
-                  {editingId === product.id ? (
-                    <input
-                      name="price"
-                      type="number"
-                      value={editForm.price}
-                      onChange={handleEditChange}
-                      style={inputEditStyle}
-                      placeholder="Price"
-                    />
-                  ) : (
-                    <>₹{product.price.toLocaleString()}</>
-                  )}
-                </td>
-                <td style={tdStyle}>
-                  {editingId === product.id ? (
-                    <>
-                      <button style={saveBtn} onClick={() => handleEditSave(product.id)}>Save</button>{" "}
-                      <button style={cancelBtn} onClick={handleEditCancel}>Cancel</button>
-                    </>
-                  ) : (
-                    <>
-                      <button style={actionBtn} onClick={() => handleEditClick(product)}>Edit</button>{" "}
-                      <button style={{ ...actionBtn, color: "red" }} onClick={() => handleDelete(product.id)}>Delete</button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))
-          ) : (
+          {filteredProducts.length ? filteredProducts.map(product => (
+            <tr key={product.id} style={{ borderBottom: "1px solid #eaeaea", textAlign: "center" }}>
+              <td style={tdStyle}>
+                {editingId === product.id ? (
+                  <input name="name" value={editForm.name} onChange={handleEditChange} style={inputEditStyle} placeholder="Name" />
+                ) : product.name}
+              </td>
+              <td style={tdStyle}>
+                {editingId === product.id ? (
+                  <select name="type" value={editForm.type} onChange={handleEditChange} style={inputEditStyle}>
+                    <option value="Product">Product</option>
+                    <option value="Service">Service</option>
+                  </select>
+                ) : product.type}
+              </td>
+              <td style={tdStyle}>
+                {editingId === product.id ? (
+                  <input name="price" type="number" value={editForm.price} onChange={handleEditChange} style={inputEditStyle} placeholder="Price" />
+                ) : `₹${product.price.toLocaleString()}`}
+              </td>
+              <td style={tdStyle}>
+                {editingId === product.id ? (
+                  <>
+                    <button style={saveBtn} onClick={() => handleEditSave(product.id)}>Save</button>{" "}
+                    <button style={cancelBtn} onClick={handleEditCancel}>Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    <button style={actionBtn} onClick={() => handleEditClick(product)}>Edit</button>{" "}
+                    <button style={{ ...actionBtn, color: "red" }} onClick={() => handleDelete(product.id)}>Delete</button>
+                  </>
+                )}
+              </td>
+            </tr>
+          )) : (
             <tr>
               <td colSpan="4" style={{ textAlign: "center", padding: "20px", color: "#999" }}>
                 No products/services found
@@ -323,12 +319,24 @@ export default function ProductCatalog() {
       {/* Add Product/Service Modal */}
       {adding && (
         <div style={{
-          position: "fixed", left: 0, top: 0, right: 0, bottom: 0, zIndex: 20,
-          background: "rgba(0,0,0,0.1)", display: "flex", alignItems: "center", justifyContent: "center"
+          position: "fixed",
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 20,
+          background: "rgba(0,0,0,0.1)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
         }}>
           <form onSubmit={handleAddSave} style={{
-            background: "#fff", borderRadius: "18px", padding: "34px 38px", width: "360px",
-            boxShadow: "0 18px 40px rgba(0,0,0,0.13)", position: "relative"
+            background: "#fff",
+            borderRadius: "18px",
+            padding: "34px 38px",
+            width: "360px",
+            boxShadow: "0 18px 40px rgba(0,0,0,0.13)",
+            position: "relative"
           }}>
             <div style={{ fontWeight: "700", fontSize: "20px", color: "#1888A3", marginBottom: "20px" }}>
               Add Product/Service
@@ -351,11 +359,27 @@ export default function ProductCatalog() {
             </div>
             <div style={{ display: "flex", justifyContent: "flex-end", gap: "15px", marginTop: "9px" }}>
               <button type="submit" style={{
-                background: "#111", color: "#fff", border: "none", borderRadius: "22px", padding: "9px 22px", fontWeight: "600", cursor: "pointer"
-              }}>Add</button>
+                background: "#111",
+                color: "#fff",
+                border: "none",
+                borderRadius: "22px",
+                padding: "9px 22px",
+                fontWeight: "600",
+                cursor: "pointer"
+              }}>
+                Add
+              </button>
               <button type="button" style={{
-                background: "#eee", color: "#222", border: "none", borderRadius: "22px", padding: "9px 22px", fontWeight: "500", cursor: "pointer"
-              }} onClick={handleAddCancel}>Cancel</button>
+                background: "#eee",
+                color: "#222",
+                border: "none",
+                borderRadius: "22px",
+                padding: "9px 22px",
+                fontWeight: "500",
+                cursor: "pointer"
+              }} onClick={handleAddCancel}>
+                Cancel
+              </button>
             </div>
           </form>
         </div>
@@ -363,7 +387,6 @@ export default function ProductCatalog() {
     </div>
   );
 }
-
 
 const thStyle = {
   padding: "12px 0",

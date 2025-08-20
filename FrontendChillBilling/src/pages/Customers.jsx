@@ -36,9 +36,28 @@ export default function Customers() {
 
   return (
     <div style={{ background: "#fff", borderRadius: "12px", marginTop: "30px", padding: "28px 38px", boxShadow: "0 0 12px rgba(0,0,0,0.07)" }}>
+      {/* Header with Back button */}
       <div style={{ display: "flex", alignItems: "center", marginBottom: "32px" }}>
-        <h2 style={{ fontSize: "27px", fontWeight: "700", color: "#1888A3", margin: 0 }}>Customer Management</h2>
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "14px", position: "relative" }}>
+        <h2 style={{ fontSize: "27px", fontWeight: "700", color: "#1888A3", margin: 0, flexGrow: 1 }}>
+          Customer Management
+        </h2>
+        <button
+          onClick={() => navigate("/admindashboard")} // Changed from "/" to "/admindashboard"
+          style={{
+            marginLeft: "auto",
+            background: "#111",
+            color: "#fff",
+            border: "none",
+            borderRadius: "22px",
+            padding: "8px 24px",
+            fontWeight: 600,
+            fontSize: 16,
+            cursor: "pointer"
+          }}
+        >
+          Back
+        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "14px", position: "relative" }}>
           <input
             type="text"
             placeholder="Search by name or email"

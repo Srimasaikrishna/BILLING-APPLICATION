@@ -96,4 +96,3 @@ const label = { width: "140px", fontWeight: "600", fontSize: "16px" };
 const input = { flex: 1, padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "16px" };
 const backBtn = { background: "#111", color: "#fff", border: "none", borderRadius: "22px", padding: "8px 32px", fontWeight: "700", fontSize: "16px", cursor: "pointer", marginRight: "15px" };
 const addBtn = { background: "#111", color: "#fff", border: "none", borderRadius: "22px", padding: "8px 32px", fontWeight: "700", fontSize: "16px", cursor: "pointer" };
-

@@ -31,7 +31,6 @@ export default function InvoiceManagement() {
   const [filterStatus, setFilterStatus] = useState("");
   const [minAmount, setMinAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("");
-
   const navigate = useNavigate();
 
   const filteredInvoices = invoices.filter(inv => {
@@ -56,33 +55,56 @@ export default function InvoiceManagement() {
 
   return (
     <div style={{
-        background: "#fff",
-        borderRadius: "12px",
-        margin: "30px auto",
-        padding: "28px 38px",
-        maxWidth: "980px",
-        boxShadow: "0 0 12px rgba(0,0,0,0.07)",
-        position: "relative"
+      background: "#fff",
+      borderRadius: "12px",
+      margin: "30px auto",
+      padding: "28px 38px",
+      maxWidth: "980px",
+      boxShadow: "0 0 12px rgba(0,0,0,0.07)",
+      position: "relative"
+    }}>
+      {/* Header with Back button */}
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "24px"
       }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
         <span style={{ color: "#1888A3", fontSize: "20px", fontWeight: "700" }}>
           Invoice Management
         </span>
-        <button
-          onClick={() => navigate("/generate-invoice")}
-          style={{
-            background: "#111",
-            color: "#fff",
-            fontWeight: "600",
-            border: "none",
-            borderRadius: "22px",
-            padding: "10px 28px",
-            fontSize: "16px",
-            cursor: "pointer"
-          }}
-        >
-          Generate Invoice
-        </button>
+        <div style={{ display: "flex", gap: "16px" }}>
+          <button
+            onClick={() => navigate("/admindashboard")} // Edited to navigate to dashboard
+            style={{
+              background: "#111",
+              color: "#fff",
+              border: "none",
+              borderRadius: "22px",
+              padding: "10px 32px",
+              fontWeight: "600",
+              fontSize: "16px",
+              cursor: "pointer"
+            }}
+          >
+            Back
+          </button>
+          <button
+            onClick={() => navigate("/generate-invoice")}
+            style={{
+              background: "#111",
+              color: "#fff",
+              fontWeight: "600",
+              border: "none",
+              borderRadius: "22px",
+              padding: "10px 28px",
+              fontSize: "16px",
+              cursor: "pointer"
+            }}
+          >
+            Generate Invoice
+          </button>
+        </div>
       </div>
 
       <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "20px" }}>
@@ -115,18 +137,17 @@ export default function InvoiceManagement() {
 
       {showFilter && (
         <div style={{
-            position: "absolute",
-            top: "120px",
-            left: "calc(50% - 190px)",
-            width: "375px",
-            background: "#fff",
-            border: "1px solid #aaa",
-            boxShadow: "0 12px 32px rgba(0,0,0,0.09)",
-            borderRadius: "12px",
-            zIndex: 2,
-            padding: "24px"
-          }}
-        >
+          position: "absolute",
+          top: "120px",
+          left: "calc(50% - 190px)",
+          width: "375px",
+          background: "#fff",
+          border: "1px solid #aaa",
+          boxShadow: "0 12px 32px rgba(0,0,0,0.09)",
+          borderRadius: "12px",
+          zIndex: 2,
+          padding: "24px"
+        }}>
           <h4 style={{ marginTop: 0, marginBottom: "12px", fontSize: "18px", color: "#1888A3", fontWeight: "700" }}>Filter Invoices</h4>
           <div style={{ marginBottom: "18px" }}>
             <label style={{ fontWeight: "600", marginRight: "9px" }}>Status:</label>

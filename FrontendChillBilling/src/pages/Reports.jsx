@@ -3,6 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
 } from 'recharts';
+import { useNavigate } from "react-router-dom";
 
 const months = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -44,6 +45,7 @@ const topCustomers = [
 export default function ReportingAnalytics() {
   const [selectedMonth, setSelectedMonth] = useState("Jun");
   const [selectedYear, setSelectedYear] = useState("2025");
+  const navigate = useNavigate();
 
   return (
     <div style={{
@@ -55,16 +57,32 @@ export default function ReportingAnalytics() {
       minHeight: "620px",
       boxShadow: "0 0 24px rgba(0,0,0,0.09)"
     }}>
-      {/* Only the header title, no logo image */}
+      {/* Header with Back button */}
       <div style={{
         display: "flex",
         alignItems: "center",
         marginBottom: "28px",
-        gap: "13px"
+        gap: "13px",
+        justifyContent: "space-between"
       }}>
         <span style={{ color: "#1888A3", fontSize: "24px", fontWeight: "700" }}>
           Reporting & Analytics
         </span>
+        <button
+          onClick={() => navigate("/admindashboard")}
+          style={{
+            background: "#111",
+            color: "#fff",
+            border: "none",
+            borderRadius: "22px",
+            padding: "9px 38px",
+            fontWeight: "600",
+            fontSize: "17px",
+            cursor: "pointer"
+          }}
+        >
+          Back
+        </button>
       </div>
 
       {/* Filters: Month and Year */}

@@ -19,8 +19,8 @@ export default function PaymentTracking() {
   const [payments] = useState(initialPayments);
   const [search, setSearch] = useState("");
   const [showFilter, setShowFilter] = useState(false);
-  const [filterAmount, setFilterAmount] = useState(""); // Amount
-  const [filterMethod, setFilterMethod] = useState(""); // Method
+  const [filterAmount, setFilterAmount] = useState("");
+  const [filterMethod, setFilterMethod] = useState("");
   const navigate = useNavigate();
 
   // Filtering logic
@@ -53,9 +53,40 @@ export default function PaymentTracking() {
       maxWidth: "950px",
       boxShadow: "0 0 16px rgba(0,0,0,0.08)"
     }}>
-      {/* Title Row */}
-      <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+      {/* Title Row with Back Button */}
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "10px", justifyContent: "space-between" }}>
         <span style={{ color: "#1888A3", fontSize: "21px", fontWeight: "700" }}>Payment Tracking</span>
+        <div style={{ display: "flex", gap: "16px" }}>
+          <button
+            onClick={() => navigate("/admindashboard")}  // Back button navigates to dashboard
+            style={{
+              background: "#111",
+              color: "#fff",
+              border: "none",
+              borderRadius: "22px",
+              padding: "10px 32px",
+              fontWeight: "600",
+              fontSize: "16px",
+              cursor: "pointer"
+            }}
+          >
+            Back
+          </button>
+          <button
+            style={{
+              background: "#fff",
+              border: "2px solid #222",
+              borderRadius: "22px",
+              fontWeight: "600",
+              padding: "9px 20px",
+              fontSize: "15px",
+              cursor: "pointer"
+            }}
+            onClick={() => navigate("/record-payment")}
+          >
+            Record new payment
+          </button>
+        </div>
       </div>
 
       {/* Top controls row */}
@@ -85,21 +116,6 @@ export default function PaymentTracking() {
         >
           Filter
         </button>
-        <button
-          style={{
-            marginLeft: "auto",
-            background: "#fff",
-            border: "2px solid #222",
-            borderRadius: "22px",
-            fontWeight: "600",
-            padding: "9px 20px",
-            fontSize: "15px",
-            cursor: "pointer",
-          }}
-          onClick={() => navigate("/record-payment")}
-        >
-          Record new payment
-        </button>
       </div>
 
       {/* Filter Popup */}
@@ -117,7 +133,7 @@ export default function PaymentTracking() {
           padding: "24px",
         }}>
           <h4 style={{ marginTop: 0, marginBottom: "12px", fontSize: "18px", color: "#1888A3", fontWeight: "700" }}>Filter Payments</h4>
-          
+
           <div style={{ marginBottom: "18px" }}>
             <label style={{ fontWeight: "600", marginRight: "9px" }}>Amount:</label>
             <select
@@ -146,6 +162,7 @@ export default function PaymentTracking() {
           </div>
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "9px" }}>
             <button
+              onClick={() => setShowFilter(false)}
               style={{
                 background: "#111",
                 color: "#fff",
@@ -155,11 +172,15 @@ export default function PaymentTracking() {
                 fontWeight: "600",
                 cursor: "pointer"
               }}
-              onClick={() => setShowFilter(false)}
             >
               Apply Filter
             </button>
             <button
+              onClick={() => {
+                setFilterAmount("");
+                setFilterMethod("");
+                setShowFilter(false);
+              }}
               style={{
                 background: "#eaeaea",
                 border: "none",
@@ -167,11 +188,6 @@ export default function PaymentTracking() {
                 padding: "7px 16px",
                 fontWeight: "500",
                 cursor: "pointer"
-              }}
-              onClick={() => {
-                setFilterAmount("");
-                setFilterMethod("");
-                setShowFilter(false);
               }}
             >
               Clear
