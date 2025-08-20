@@ -2,9 +2,16 @@ package com.chillbilling.service;
 
 import com.chillbilling.dto.AuthResponse;
 import com.chillbilling.dto.LoginRequest;
+import com.chillbilling.dto.RegisterRequest;
+import com.chillbilling.dto.RegisterResponse;
 import com.chillbilling.entity.User;
+import com.chillbilling.exception.BusinessException;
 import com.chillbilling.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,28 +21,109 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder; // Already configured in your project
-    private final TokenService tokenService; // JWT token service
+    private final TokenService tokenService;
+    private final EmailService emailService;
 
     public AuthResponse login(LoginRequest request) {
-        // Find user by email or username
         User user = userRepository.findByEmailId(request.getIdentifier())
                         .or(() -> userRepository.findByUsername(request.getIdentifier()))
                         .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Check password
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Invalid password");
         }
 
-        // Optional: check status
         if (user.getStatus() != User.Status.ACTIVE) {
             throw new RuntimeException("User is not active");
         }
 
-        // Generate JWT token
         String token = tokenService.generateToken(user);
 
-        // Return token and role
         return new AuthResponse(token, user.getRole().name());
     }
+    
+    public RegisterResponse register(RegisterRequest request) {
+    	
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new BusinessException("Passwords do not match");
+        }
+        
+        if (userRepository.findByEmailId(request.getEmail()).isPresent()) {
+            throw new BusinessException("Email already in use");
+        }
+        userRepository.findByUsername(request.getUsername()).ifPresent(u -> {
+            throw new BusinessException("Username already in use");
+        });
+        userRepository.findByPhoneNumber(request.getPhoneNumber()).ifPresent(u -> {
+            throw new BusinessException("Phone number already in use");
+        });
+
+        User user = new User();
+        user.setFullName(request.getFullName());
+        user.setEmailId(request.getEmail());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setUsername(request.getUsername());
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        user.setRole(User.Role.CUSTOMER);
+        user.setStatus(User.Status.INACTIVE); 
+
+        // Generate verification token
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
+        user.setTokenExpiry(LocalDateTime.now().plusHours(24));
+
+        userRepository.save(user);
+
+        // send email
+        emailService.sendVerificationEmail(user.getEmailId(), token);
+
+        return new RegisterResponse(
+                user.getEmailId(),
+                user.getStatus().name(),
+                "User registered. Please check your email to verify your account."
+        );
+    }
+
+    
+    public void verifyEmail(String token) {
+        User user = userRepository.findByVerificationToken(token)
+                .orElseThrow(() -> new BusinessException("Invalid verification token"));
+
+        if (user.getTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new BusinessException("Token expired");
+        }
+
+        user.setStatus(User.Status.ACTIVE);
+        user.setVerificationToken(null);
+        user.setTokenExpiry(null);
+        userRepository.save(user);
+    }
+    
+    public void forgotPassword(String email) {
+        User user = userRepository.findByEmailId(email)
+                .orElseThrow(() -> new BusinessException("User not found"));
+
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
+        user.setTokenExpiry(LocalDateTime.now().plusHours(1)); // valid for 1 hour
+        userRepository.save(user);
+
+        emailService.sendPasswordResetEmail(user.getEmailId(), token);
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        User user = userRepository.findByVerificationToken(token)
+                .orElseThrow(() -> new BusinessException("Invalid reset token"));
+
+        if (user.getTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new BusinessException("Reset token expired");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        user.setVerificationToken(null);
+        user.setTokenExpiry(null);
+        userRepository.save(user);
+    }
+
+
 }
