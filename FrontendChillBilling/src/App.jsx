@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AppProvider } from "./contexts/AppContext";  // ✅ import AppProvider
+import { AppProvider } from "./contexts/AppContext";  
 
 import Dashboard from './pages/Dashboard';
 import Welcome from './pages/Welcome';
@@ -22,7 +22,7 @@ import AddUserForm from "./pages/AddUserForm";
 
 function App() {
   return (
-    <AppProvider>   {/* ✅ Wrap everything with AppProvider */}
+    <AppProvider>  
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />

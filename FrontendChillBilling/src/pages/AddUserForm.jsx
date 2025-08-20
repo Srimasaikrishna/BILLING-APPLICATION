@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AppContext } from "../contexts/AppContext";
 
-export default function AddUserForm({ onAdd }) {
+export default function AddUserForm() {
+  const { addUser } = useContext(AppContext);
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
@@ -14,20 +16,18 @@ export default function AddUserForm({ onAdd }) {
     status: "Active",
   });
 
-  // Update form for radio/inputs
   function handleChange(e) {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   }
 
-  // Add user validation if needed
   function handleSubmit(e) {
     e.preventDefault();
     if (form.password !== form.confirmPassword) {
       alert("Passwords do not match");
       return;
     }
-    onAdd(form);
+    addUser(form);
     navigate("/user-management");
   }
 
@@ -96,3 +96,4 @@ const label = { width: "140px", fontWeight: "600", fontSize: "16px" };
 const input = { flex: 1, padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "16px" };
 const backBtn = { background: "#111", color: "#fff", border: "none", borderRadius: "22px", padding: "8px 32px", fontWeight: "700", fontSize: "16px", cursor: "pointer", marginRight: "15px" };
 const addBtn = { background: "#111", color: "#fff", border: "none", borderRadius: "22px", padding: "8px 32px", fontWeight: "700", fontSize: "16px", cursor: "pointer" };
+
