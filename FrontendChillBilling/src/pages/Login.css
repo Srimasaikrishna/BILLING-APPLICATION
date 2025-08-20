@@ -1,4 +1,4 @@
-/* General Reset */
+
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +6,6 @@
   font-family: Arial, sans-serif;
 }
 
-/* Navbar */
 .navbar {
   background: #ebe5e5;
   color: #333;

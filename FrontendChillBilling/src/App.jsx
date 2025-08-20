@@ -17,6 +17,7 @@ import EditInvoiceForm from "./pages/EditInvoiceForm";
 import EditCustomerForm from "./pages/EditCustomerForm";
 import EditUserForm from "./pages/EditUserForm";
 import AddUserForm from "./pages/AddUserForm";
+import Register from "./pages/Register";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path="edit-user/:id" element={<EditUserForm />} />
         <Route path="edit-customer/:id" element={<EditCustomerForm />} />
         <Route path="edit-invoice/:id" element={<EditInvoiceForm />} />
+        <Route path="register" element={<Register/>}/>
       </Routes>
     </Router>
   );

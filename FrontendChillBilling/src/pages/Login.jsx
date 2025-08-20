@@ -25,7 +25,7 @@ const Login = () => {
     }
   return (
     <>
-      {/* Navbar */}
+ 
       <nav className="navbar">
         <div><img className="logo" src={logo} alt="logo not found" /></div>
         <div className="nav-links">
@@ -35,7 +35,7 @@ const Login = () => {
         </div>
       </nav>
 
-      {/* Login Form */}
+    
       <div className="login-container">
         <h1>Welcome back</h1>
         <form onSubmit={login}>
