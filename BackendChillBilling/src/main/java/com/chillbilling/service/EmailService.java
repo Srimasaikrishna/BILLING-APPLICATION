@@ -13,7 +13,7 @@ public class EmailService {
 
     public void sendVerificationEmail(String to, String token) {
         String subject = "Verify your account";
-        String link = "https://your-domain/api/auth/verify?token=" + token;
+        String link = "https://localhost:8080/api/auth/verify?token=" + token;
         String body = "Click the link to verify your account: " + link;
 
         sendEmail(to, subject, body);
@@ -21,7 +21,7 @@ public class EmailService {
 
     public void sendPasswordResetEmail(String to, String token) {
         String subject = "Reset your password";
-        String link = "https://your-domain/api/auth/reset-password?token=" + token;
+        String link = "https://localhost:8080/api/auth/reset-password?token=" + token;
         String body = "Click the link to reset your password: " + link;
 
         sendEmail(to, subject, body);
