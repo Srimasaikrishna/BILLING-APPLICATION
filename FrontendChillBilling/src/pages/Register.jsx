@@ -12,17 +12,18 @@ const Register = () => {
           background: #fff;
         }
 
-      .logo img {
-        height: 50px;
-        width: auto;
-        object-fit: contain;
+        .logo img {
+          height: 50px;
+          width: auto;
+          object-fit: contain;
         }
+
         .navbar {
           display: flex;
           justify-content: space-between;
           align-items: center;
           background: #f5eaea;
-          padding: 10px;
+          padding: 1px;
         }
 
         .logo {
@@ -65,19 +66,20 @@ const Register = () => {
           font-size: 16px;
           border: none;
           cursor: pointer;
+          border-radius: 15px;    /* fixed */
+          padding: 8px 16px;      /* fixed */
+          transition: all 0.3s ease;
         }
 
         .login-btn-nav:hover {
           background-color: black;
           color: white;
-          border-radius: 15px;
-          padding: 8px 16px;
         }
 
         .register-wrapper {
           display: flex;
           justify-content: space-between;
-          padding: 40px;
+          padding: 20px;
           background: white;
           margin: 20px;
         }
@@ -106,8 +108,8 @@ const Register = () => {
           font-size: 150px;
           font-weight: bold;
           color: transparent;
-          -webkit-text-stroke: 2px red;
-          margin: 0 10px;
+          -webkit-text-stroke: 2px #000000ff;
+          margin: 0 5px;
         }
 
         .registe-word {
@@ -121,7 +123,7 @@ const Register = () => {
         }
 
         .text {
-          font-size: 24px;
+          font-size: 14px;
           font-weight: bold;
           color: black;
         }
@@ -142,7 +144,7 @@ const Register = () => {
 
         .register-form {
           flex: 1;
-          padding: 20px 40px;
+          padding: 5px 10px;
         }
 
         .register-form form {
@@ -151,16 +153,17 @@ const Register = () => {
         }
 
         .register-form label {
-          margin-top: 10px;
+          margin-top: -15px;
           font-weight: bold;
         }
 
         .register-form input {
-          padding: 10px;
-          margin-top: 5px;
+          padding: 5px;
+          margin-top: 1px;
           border-radius: 20px;
           border: 1px solid #ccc;
           outline: none;
+          font-weight: bold;   /* ✅ input bold */
         }
 
         .register-btn {
@@ -172,7 +175,7 @@ const Register = () => {
           border-radius: 25px;
           cursor: pointer;
           font-size: 16px;
-          width: 60%;
+          width: 100%;
           align-self: center;
           transition: all 0.3s ease;
         }
@@ -186,7 +189,7 @@ const Register = () => {
 
         footer {
           background-color: #f5eaea;
-          padding: 10px 20px;
+          padding: 1px 5px;
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -199,13 +202,13 @@ const Register = () => {
 
         footer .contact {
           display: flex;
-          gap: 15px;
+          gap: 3px;
           align-items: center;
         }
       `}</style>
       <div className="navbar">
         <div className="logo">
-        <img src={logo} alt="Billing App Logo" />
+          <img src={logo} alt="Billing App Logo" />
         </div>
         <div className="nav-links">
           <a href="#">Home</a>

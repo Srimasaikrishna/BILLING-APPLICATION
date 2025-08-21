@@ -1,14 +1,30 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import './CustomerDashboard.css';
 import logo from '../assets/logo2.jpg';
+import './Profile.css';
 
 const Profile = () => {
   const navigate = useNavigate();
 
+  // Refs for each input
+  const refs = {
+    name: useRef(null),
+    username: useRef(null),
+    email: useRef(null),
+    phone: useRef(null),
+    password: useRef(null),
+  };
+
+  // Track which field is currently focused
+  const [focusedField, setFocusedField] = useState(null);
+
+  const handleEditClick = (field) => {
+    setFocusedField(field);
+    refs[field].current?.focus();
+  };
+
   return (
     <div className="dashboard-container">
-  
       <div className="dashboard-navbar">
         <div className="logo">
           <img src={logo} alt="Chill Billing Logo" className="ChillBillingLogo" />
@@ -21,7 +37,6 @@ const Profile = () => {
         </div>
       </div>
 
-      
       <div className="dashboard-body">
         <div className="sidebar">
           <ul>
@@ -33,37 +48,24 @@ const Profile = () => {
         </div>
 
         <div className="main-content">
-   
           <div className="form">
-            <div className="form-group">
-              <label>Name :</label>
-              <input type="text" />
-              <span className="edit">✎</span>
-            </div>
-
-            <div className="form-group">
-              <label>Username :</label>
-              <input type="text" />
-              <span className="edit">✎</span>
-            </div>
-
-            <div className="form-group">
-              <label>Email id :</label>
-              <input type="email" />
-              <span className="edit">✎</span>
-            </div>
-
-            <div className="form-group">
-              <label>Phone No :</label>
-              <input type="text" />
-              <span className="edit">✎</span>
-            </div>
-
-            <div className="form-group">
-              <label>Password :</label>
-              <input type="password" />
-              <span className="edit">✎</span>
-            </div>
+            {[
+              { label: 'Name', key: 'name', type: 'text' },
+              { label: 'Username', key: 'username', type: 'text' },
+              { label: 'Email id', key: 'email', type: 'email' },
+              { label: 'Phone No', key: 'phone', type: 'text' },
+              { label: 'Password', key: 'password', type: 'password' },
+            ].map(({ label, key, type }) => (
+              <div className="form-group" key={key}>
+                <label>{label} :</label>
+                <input
+                  type={type}
+                  ref={refs[key]}
+                  onBlur={() => setFocusedField(null)}
+                />
+                <span className="edit" onClick={() => handleEditClick(key)}>✎</span>
+              </div>
+            ))}
 
             <button className="save-btn">Save</button>
           </div>

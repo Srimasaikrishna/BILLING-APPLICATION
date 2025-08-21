@@ -1,0 +1,187 @@
+.sidebar ul li.active a {
+  font-weight: bold;
+  color: #000;
+  border-left: 3px solid #007bff;
+  padding-left: 8px;
+}
+
+.invoice-card {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.invoice-table th,
+.invoice-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.invoice-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.view-btn,
+.download-btn {
+  margin-right: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  background-color: #eee;
+  border-radius: 4px;
+}
+
+.view-btn:hover {
+  background-color: #d0eaff;
+}
+
+.download-btn:hover {
+  background-color: #d0ffd6;
+}
+.search-input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 160px;
+}
+
+.filter-icon {
+  font-size: 16px;
+  cursor: pointer;
+  color: #555;
+}
+.status-filter {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-wrapper {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #888;
+}
+
+.search-input {
+  padding: 6px 10px 6px 28px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 160px;
+}
+
+.status-filter {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
+.dashboard-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+.navbar-left img {
+  height: 40px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #aaa;
+}
+
+.username-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.home-btn,
+.dashboard-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.home-btn {
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+}
+
+.home-btn:hover {
+  background-color: #f0f0f0;
+  border-color: #999;
+}
+
+.dashboard-btn {
+  background-color: #000;
+  color: #fff;
+  border: none;
+}
+
+.dashboard-btn:hover {
+  background-color: #333;
+}
+.user-icon {
+  font-size: 18px;
+  color: #333;
+}
+.user-icon
+{
+    border: none;
+    background: none;
+}

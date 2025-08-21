@@ -1,3 +1,62 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: sans-serif;
+}
+
+.dashboard-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f5f5f5;
+}
+
+.logo img {
+  height: 40px;
+}
+
+.user-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logout-btn {
+  padding: 6px 12px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.dashboard-body {
+  display: flex;
+  flex: 1;
+}
+
+.sidebar {
+  width: 200px;
+  padding: 20px;
+  background-color: #eee;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin-bottom: 10px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+}
+
 .form {
   max-width: 500px;
   margin: 0 auto;
@@ -25,6 +84,7 @@
 .edit {
   margin-left: 8px;
   cursor: pointer;
+  font-size: 18px;
 }
 
 .save-btn {
@@ -35,4 +95,10 @@
   color: white;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.dashboard-footer {
+  padding: 10px;
+  text-align: center;
+  background-color: #f5f5f5;
 }

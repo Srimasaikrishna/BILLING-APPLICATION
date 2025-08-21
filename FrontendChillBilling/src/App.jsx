@@ -22,6 +22,10 @@ import AddUserForm from "./pages/AddUserForm";
 import Register from "./pages/Register";
 import CustomerDashboard from "./CustomerPages/CustomerDashboard";
 import Profile from "./CustomerPages/Profile";
+import CustomerInvoice from "./CustomerPages/CustomerInvoice";
+import MakePayment from "./CustomerPages/MakePayment";
+import PaymentHistory from "./CustomerPages/PaymentHistory";
+import InvoiceDetails from "./CustomerPages/InvoiceDetails";
 
 function App() {
   return (
@@ -46,9 +50,12 @@ function App() {
         <Route path="register" element={<Register/>}/>
         <Route path="CustomerDashboard" element={<CustomerDashboard/>}/>
         <Route path="CustomerProfile" element={<Profile/>}/>
+        <Route path="CustomerInvoice" element={<CustomerInvoice/>}/>
+        <Route path="MakePayment" element={<MakePayment/>}/>
+         <Route path="PaymentHistory" element={<PaymentHistory/>}/>
+         <Route path="InvoiceDetails" element={<InvoiceDetails/>}/>
       </Routes>
     </Router>
-
   );
 }
 
