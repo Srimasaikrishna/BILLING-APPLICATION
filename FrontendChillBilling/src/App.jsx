@@ -29,6 +29,7 @@ import InvoiceDetails from "./CustomerPages/InvoiceDetails";
 
 function App() {
   return (
+     <AppProvider>
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
@@ -56,6 +57,7 @@ function App() {
          <Route path="InvoiceDetails" element={<InvoiceDetails/>}/>
       </Routes>
     </Router>
+   </AppProvider> 
   );
 }
 
