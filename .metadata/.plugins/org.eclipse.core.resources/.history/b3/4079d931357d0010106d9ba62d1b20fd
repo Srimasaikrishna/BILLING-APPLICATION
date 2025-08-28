@@ -1,0 +1,28 @@
+package com.chillbilling.dto;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+@Data
+public class InvoiceRequest {
+	
+	@Email(message = "Invalid email format")
+    @NotBlank(message = "Customer email is required")
+    private String customerEmail;
+	
+	@NotNull(message = "Due date is required")
+    private LocalDate dueDate;
+    private Double paidAmount;
+    private List<ItemRequest> items;
+
+    @Data
+    public static class ItemRequest {
+        private String productName;
+        private Integer quantity;
+    }
+}

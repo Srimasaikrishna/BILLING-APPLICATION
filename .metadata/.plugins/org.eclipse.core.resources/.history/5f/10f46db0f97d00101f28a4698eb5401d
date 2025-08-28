@@ -1,0 +1,77 @@
+package com.chillbilling.controller;
+
+import com.chillbilling.dto.InvoiceRequest;
+import com.chillbilling.entity.Invoice;
+import com.chillbilling.service.InvoiceService;
+
+import jakarta.validation.Valid;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/invoices")
+public class InvoiceController {
+
+    private final InvoiceService invoiceService;
+
+    public InvoiceController(InvoiceService invoiceService) {
+        this.invoiceService = invoiceService;
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','ACCOUNTANT')")
+    @PostMapping
+    public ResponseEntity<String> createInvoice(@Valid @RequestBody InvoiceRequest request) {
+        invoiceService.createInvoice(request);
+        return ResponseEntity.ok("Invoice generated successfully");
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','ACCOUNTANT')")
+    @PutMapping("/{invoiceNumber}")
+    public ResponseEntity<String> updateInvoice(@Valid @RequestBody InvoiceRequest request) {
+        invoiceService.updateInvoice(request);
+        return ResponseEntity.ok("Invoice updated successfully");
+    }
+
+    @PreAuthorize("hasRole('ADMIN', 'ACCOUNTANT')")
+    @DeleteMapping("/{invoiceNumber}")
+    public void deleteInvoice(@PathVariable String invoiceNumber) {
+        invoiceService.deleteInvoice(invoiceNumber);
+    }
+
+
+    @PreAuthorize("hasAnyRole('ADMIN','ACCOUNTANT','CUSTOMER')")
+    @GetMapping("/{invoiceNumber}")
+    public Invoice getInvoice(@PathVariable String invoiceNumber, Authentication auth) {
+        Invoice invoice = invoiceService.getInvoice(invoiceNumber);
+
+        // If logged-in user is a CUSTOMER, enforce ownership check
+        if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_CUSTOMER"))) {
+            String email = auth.getName();
+            if (!invoice.getCustomer().getEmailId().equals(email)) {
+                throw new AccessDeniedException("Access denied: You can only view your own invoices.");
+            }
+        }
+
+        return invoice;
+    }
+
+
+    @PreAuthorize("hasAnyRole('ADMIN','ACCOUNTANT')")
+    @GetMapping
+    public List<Invoice> getAllInvoices() {
+        return invoiceService.getAllInvoices();
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/my")
+    public List<Invoice> getInvoicesForCurrentCustomer(Authentication auth) {
+        String email = auth.getName();
+        return invoiceService.getInvoicesByCustomerEmail(email);
+    }
+}

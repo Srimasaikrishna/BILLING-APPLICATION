@@ -1,0 +1,27 @@
+package com.chillbilling.controller;
+
+import com.chillbilling.entity.Payment;
+import com.chillbilling.service.PaymentService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/payments")
+public class PaymentController {
+
+    private final PaymentService paymentService;
+
+    public PaymentController(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
+
+    // ✅ Record new payment
+    @PostMapping("/{invoiceNumber}")
+    public ResponseEntity<Payment> recordPayment(
+            @PathVariable String invoiceNumber,
+            @RequestBody Payment payment) {
+
+        Payment saved = paymentService.recordPayment(invoiceNumber, payment);
+        return ResponseEntity.ok(saved);
+    }
+}

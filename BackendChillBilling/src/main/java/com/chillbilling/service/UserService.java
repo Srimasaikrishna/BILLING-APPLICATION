@@ -33,6 +33,7 @@ public class UserService {
     // ADMIN: Manage all users
     public User addUser(User user) {
         validateUser(user);
+        user.setStatus(User.Status.ACTIVE);
         user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
         return userRepository.save(user);
     }
@@ -66,9 +67,9 @@ public class UserService {
         if (updatedUser.getRole() != null) {
             existing.setRole(updatedUser.getRole());
         }
-
-        if (updatedUser.getPasswordHash() != null && !updatedUser.getPasswordHash().isBlank()) {
-            existing.setPasswordHash(passwordEncoder.encode(updatedUser.getPasswordHash()));
+        
+        if (updatedUser.getStatus() != null) {
+            existing.setStatus(updatedUser.getStatus());
         }
 
         return userRepository.save(existing);
@@ -104,10 +105,8 @@ public class UserService {
             throw new BusinessException("Username is already taken.");
         }
         existing.setUsername(updatedUser.getUsername());
-
-        if (updatedUser.getPasswordHash() != null && !updatedUser.getPasswordHash().isBlank()) {
-            existing.setPasswordHash(passwordEncoder.encode(updatedUser.getPasswordHash()));
-        }
+        
+        existing.setStatus(updatedUser.getStatus());
 
         return userRepository.save(existing);
     }

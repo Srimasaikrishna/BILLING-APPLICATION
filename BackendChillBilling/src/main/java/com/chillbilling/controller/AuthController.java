@@ -3,6 +3,7 @@ package com.chillbilling.controller;
 import com.chillbilling.dto.AuthResponse;
 import com.chillbilling.dto.EmailRequest;
 import com.chillbilling.dto.LoginRequest;
+import com.chillbilling.dto.NotifyRequest;
 import com.chillbilling.dto.RegisterRequest;
 import com.chillbilling.dto.RegisterResponse;
 import com.chillbilling.dto.ResetPasswordRequest;
@@ -35,6 +36,12 @@ public class AuthController {
     public ResponseEntity<?> verify(@RequestParam String token) {
         authService.verifyEmail(token);
         return ResponseEntity.ok("Email verified. You can now login.");
+    }
+    
+    @PostMapping("/notify")
+    public ResponseEntity<?> notify(@RequestBody NotifyRequest request) {
+    	authService.sendOverdueInvoiceNotification(request.getEmail(), request.getInvoiceNumber());
+    	return ResponseEntity.ok("Notification sent successfully.");
     }
 
     @PostMapping("/forgot-password")

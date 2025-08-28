@@ -34,7 +34,7 @@ public class ProductService {
 
     public Product updateProduct(Long productId, Product updatedProduct) {
         Product existingProduct = productRepository.findById(productId)
-        		.orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
+        		.orElseThrow(() -> new ResourceNotFoundException("Product not found "));
 
         existingProduct.setProductName(updatedProduct.getProductName());
         existingProduct.setType(updatedProduct.getType());
@@ -43,10 +43,6 @@ public class ProductService {
         return productRepository.save(existingProduct);
     }
     
-    public Product updateProductByName(Product updatedProduct) {
-        Long productId = findProductIdByName(updatedProduct.getProductName());
-        return updateProduct(productId, updatedProduct);
-    }
 
     public Product getProductById(Long productId) {
         return productRepository.findById(productId)

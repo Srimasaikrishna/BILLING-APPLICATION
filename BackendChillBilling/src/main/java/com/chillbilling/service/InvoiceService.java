@@ -10,6 +10,7 @@ import com.chillbilling.exception.ResourceNotFoundException;
 import com.chillbilling.repository.InvoiceRepository;
 import com.chillbilling.repository.UserRepository;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,28 +27,50 @@ public class InvoiceService {
     private final UserRepository userRepository;
     private final InvoiceItemService invoiceItemService;
     private final PaymentService paymentService;
+    private final EmailService emailService;
 
     public InvoiceService(InvoiceRepository invoiceRepository,
                           UserRepository userRepository,
                           InvoiceItemService invoiceItemService,
-                          PaymentService paymentService) {
+                          PaymentService paymentService,
+                          EmailService emailService) {
         this.invoiceRepository = invoiceRepository;
         this.userRepository = userRepository;
         this.invoiceItemService = invoiceItemService;
         this.paymentService = paymentService;
+        this.emailService=emailService;
     }
 
-    // Generate invoice number
+    @Scheduled(cron = "0 0 * * * *") // Every hour
+    public void updateOverdueInvoices() {
+        List<Invoice> invoices = invoiceRepository.findAll();
+
+        LocalDate today = LocalDate.now();
+        for (Invoice invoice : invoices) {
+            if (invoice.getStatus() != Invoice.Status.PAID && invoice.getDueDate().isBefore(today)) {
+                if (invoice.getPaidAmount() == 0) {
+                    invoice.setStatus(Invoice.Status.OVERDUE);
+                } else if (invoice.getPaidAmount() < invoice.getTotalAmount()) {
+                    invoice.setStatus(Invoice.Status.OVERDUE);
+                }
+                invoiceRepository.save(invoice);
+            }
+        }
+    }
+
+    
     private synchronized String generateInvoiceNumber() {
         String invoiceNumber;
         do {
             int number = 100000 + new Random().nextInt(900000);
             invoiceNumber = "INV" + number;
-        } while (invoiceRepository.findByInvoiceNumber(invoiceNumber).isPresent()); // ensure unique
+        } while (invoiceRepository.findByInvoiceNumber(invoiceNumber).isPresent());
 
         return invoiceNumber;
     }
     
+    
+    // Generate invoice number
     public Invoice createInvoice(InvoiceRequest request) {
         // Fetch customer
         User customer = userRepository.findByEmailId(request.getCustomerEmail())
@@ -76,10 +99,8 @@ public class InvoiceService {
 
     // Update invoice
     public Invoice updateInvoice(InvoiceRequest request) {
-    	
-    	
         String invoiceNumber = request.getInvoiceNumber();
-        
+
         Invoice invoice = invoiceRepository.findByInvoiceNumber(invoiceNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Invoice not found: " + invoiceNumber));
 
@@ -90,20 +111,21 @@ public class InvoiceService {
         invoice = invoiceRepository.findByInvoiceNumber(invoiceNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Invoice not found after item update."));
 
-        double totalAmount = invoice.getTotalAmount();  
-        double oldPaidAmount = invoice.getPaidAmount(); 
+        double totalAmount = invoice.getTotalAmount();
+        double oldPaidAmount = invoice.getPaidAmount();
         Double newPaidAmount = request.getPaidAmount();
 
         if (newPaidAmount == null || newPaidAmount < 0) {
             throw new BusinessException("Paid amount must be provided and >= 0.");
         }
-        if (newPaidAmount > totalAmount) {
-            throw new BusinessException("Paid amount cannot exceed total amount.");
+
+        if (newPaidAmount < oldPaidAmount) {
+            throw new BusinessException("Paid amount cannot be reduced.");
         }
 
-        double paymentDifference = newPaidAmount - oldPaidAmount;
+        if (newPaidAmount > oldPaidAmount) {
+            double paymentDifference = newPaidAmount - oldPaidAmount;
 
-        if (paymentDifference > 0) {
             PaymentRecord record = new PaymentRecord();
             record.setInvoiceNumber(invoiceNumber);
             record.setAmount(paymentDifference);
@@ -115,11 +137,35 @@ public class InvoiceService {
             paymentService.recordPayment(record);
         }
 
-        invoice = invoiceRepository.findByInvoiceNumber(invoiceNumber)
-                .orElseThrow(() -> new ResourceNotFoundException("Invoice not found after payment update."));
+        if (newPaidAmount > totalAmount) {
+            invoice.setPaidAmount(newPaidAmount);
+            invoice.setBalance(0.0);
+            invoice.setStatus(Invoice.Status.PAID);
+            
+            double refundAmount = newPaidAmount - totalAmount;
+            String email = invoice.getCustomer().getEmailId();
+            emailService.sendRefundInitiated(email, invoice.getInvoiceNumber(), refundAmount);
 
-        return invoice;
+            return invoiceRepository.save(invoice);
+        }
+
+        invoice.setPaidAmount(newPaidAmount);
+        invoice.setBalance(Math.max(0, totalAmount - newPaidAmount));
+
+        LocalDate today = LocalDate.now();
+        boolean isOverdue = invoice.getDueDate() != null && invoice.getDueDate().isBefore(today);
+
+        if (newPaidAmount == 0) {
+            invoice.setStatus(isOverdue ? Invoice.Status.OVERDUE : Invoice.Status.UNPAID);
+        } else if (newPaidAmount < totalAmount) {
+            invoice.setStatus(isOverdue ? Invoice.Status.OVERDUE : Invoice.Status.PARTIALLY_PAID);
+        } else {
+            invoice.setStatus(Invoice.Status.PAID);
+        }
+
+        return invoiceRepository.save(invoice);
     }
+
 
 
 

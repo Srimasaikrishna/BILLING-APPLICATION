@@ -12,7 +12,7 @@ import io.jsonwebtoken.JwtParser;
 public class TokenService {
 
     private final String SECRET_KEY = "SuperSecretJWTIsModifiedtoMinimum32Characters";
-    private final long EXPIRATION_MS = 3600000; // 1 hour
+    private final long EXPIRATION_MS = 5*3600000; // 5 hour
 
     @SuppressWarnings("deprecation")
 	public String generateToken(User user) {

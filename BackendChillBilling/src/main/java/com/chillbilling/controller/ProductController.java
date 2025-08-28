@@ -30,7 +30,7 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
     public ResponseEntity<String> updateProduct(@RequestBody Product product) {
-        productService.updateProductByName(product);
+        productService.updateProduct(product.getProductId(), product);
         return ResponseEntity.ok("Product/Service updated successfully");
     }
 
@@ -42,7 +42,7 @@ public class ProductController {
         return productService.getProductById(productId);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','ACCOUNTANT')")
     @GetMapping
     public List<Product> getAllProducts() {
         return productService.getAllProducts();

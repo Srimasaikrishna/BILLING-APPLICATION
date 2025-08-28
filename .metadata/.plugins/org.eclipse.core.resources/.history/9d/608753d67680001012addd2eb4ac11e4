@@ -1,0 +1,137 @@
+package com.chillbilling.controller;
+
+import com.chillbilling.dto.InvoiceNumberRequest;
+import com.chillbilling.dto.PaymentRecord;
+import com.chillbilling.entity.Payment;
+import com.chillbilling.entity.User;
+import com.chillbilling.service.PaymentService;
+import com.chillbilling.service.UserService;
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
+import com.razorpay.RazorpayException;
+import com.razorpay.Utils;
+
+import jakarta.validation.Valid;
+
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/payments")
+public class PaymentController {
+	
+	 @Autowired
+	    private RazorpayClient razorpayClient;
+	
+    private final PaymentService paymentService;
+    private final UserService userService;
+
+    public PaymentController(PaymentService paymentService, UserService userService) {
+        this.paymentService = paymentService;
+        this.userService = userService;
+    }
+    
+   
+
+    // 1. Create Order
+    @PostMapping("/create-order")
+    public Map<String, Object> createOrder(@RequestBody Map<String, Object> requestData) throws RazorpayException {
+        int amount = (int) requestData.get("amount"); // in paise
+        String currency = "INR";
+
+        JSONObject options = new JSONObject();
+        options.put("amount", amount * 100); // Razorpay expects amount in paise
+        options.put("currency", currency);
+        options.put("receipt", "txn_" + System.currentTimeMillis());
+
+        Order order = razorpayClient.orders.create(options);
+
+        Map<String, Object> response = new HashMap()<>();
+        response.put("orderId", order.get("id"));
+        response.put("currency", currency);
+        response.put("amount", amount * 100);
+        return response;
+    }
+
+    // 2. Webhook for Razorpay (configure URL in Razorpay dashboard)
+    @PostMapping("/webhook")
+    public String handleWebhook(@RequestBody String payload, 
+                                @RequestHeader("X-Razorpay-Signature") String signature) {
+        try {
+            String secret = "YOUR_WEBHOOK_SECRET"; 
+            boolean isValid = Utils.verifyWebhookSignature(payload, signature, secret);
+
+            if (isValid) {
+                // Parse payload to extract payment details
+                JSONObject json = new JSONObject(payload);
+                String paymentId = json.getJSONObject("payload").getJSONObject("payment").getJSONObject("entity").getString("id");
+                String status = json.getJSONObject("payload").getJSONObject("payment").getJSONObject("entity").getString("status");
+                int amount = json.getJSONObject("payload").getJSONObject("payment").getJSONObject("entity").getInt("amount");
+
+                // TODO: Save to DB -> PaymentRepository.save(...)
+                System.out.println("Payment " + paymentId + " status: " + status + " amount: " + amount);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "FAILURE";
+        }
+        return "SUCCESS";
+    }
+
+    // Record a payment (ADMIN or ACCOUNTANT)
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
+    @PostMapping
+    public ResponseEntity<String> recordPayment(@Valid @RequestBody PaymentRecord record) {
+        paymentService.recordPayment(record);
+        return ResponseEntity.ok("Payment recorded successfully");
+    }
+
+    // Get all payments (ADMIN or ACCOUNTANT)
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
+    @GetMapping
+    public List<Payment> getAllPayments() {
+        return paymentService.getAllPayments();
+    }
+
+    // Get payments by invoice number (ADMIN or ACCOUNTANT)
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
+    @PostMapping("/by-invoice")
+    public List<Payment> getPaymentsByInvoiceNumber(@RequestBody InvoiceNumberRequest request) {
+        return paymentService.getPaymentsByInvoiceNumber(request.getInvoiceNumber());
+    }
+
+    // Get current customer’s payment history
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/my")
+    public List<Payment> getCurrentCustomerPayments(Authentication auth) {
+        User loggedInUser = userService.getUserByIdentifier(auth.getName());
+        String email = loggedInUser.getEmailId();
+        return paymentService.getPaymentsByCustomerEmail(email);
+    }
+    
+    // Customer fetch payments for specific invoice belongs to same customer
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @PostMapping("/my-invoice-payments")
+    public List<Payment> getMyPaymentsByInvoiceNumber(
+            Authentication auth,
+            @RequestBody InvoiceNumberRequest request
+    ) {
+        User loggedInUser = userService.getUserByIdentifier(auth.getName());
+        String invoiceNumber = request.getInvoiceNumber();
+
+        boolean ownsInvoice = paymentService.invoiceBelongsToCustomer(invoiceNumber, loggedInUser.getEmailId());
+        if (!ownsInvoice) {
+            throw new SecurityException("You are not authorized to view payments for this invoice.");
+        }
+
+        return paymentService.getPaymentsByInvoiceNumber(invoiceNumber);
+    }
+}

@@ -1,0 +1,105 @@
+package com.chillbilling.controller;
+
+import com.chillbilling.entity.User;
+import com.chillbilling.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    // PUBLIC: Customer self-registration
+    @PostMapping("/register")
+    public User registerCustomer(@RequestBody User user) {
+        return userService.registerCustomer(user);
+    }
+
+    // ADMIN: Manage all users
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping
+    public User createUserByAdmin(@RequestBody User user) {
+        return userService.addUser(user);
+    }
+    
+	 @PreAuthorize("hasRole('ADMIN')")
+	 @PutMapping("/{email}")
+	 public User updateUser(@PathVariable String email, @RequestBody User updatedUser) {
+	     updatedUser.setEmailId(email); // ensure update by email
+	     return userService.updateUser(updatedUser);
+	 }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{email}")
+    public User getUserByEmail(@PathVariable String email) {
+        return userService.getUserByEmail(email);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{email}")
+    public void deleteUserByEmail(@PathVariable String email) {
+        userService.deleteUserByEmail(email);
+    }
+
+    // ACCOUNTANT: Manage only CUSTOMERS
+    @PreAuthorize("hasRole('ACCOUNTANT')")
+    @GetMapping("/customers")
+    public List<User> getAllCustomers() {
+        return userService.getAllCustomers();
+    }
+
+    @PreAuthorize("hasRole('ACCOUNTANT')")
+    @GetMapping("/customers/{email}")
+    public User getCustomerByEmail(@PathVariable String email) {
+        return userService.getCustomerByEmail(email);
+    }
+    
+    @PreAuthorize("hasRole('ACCOUNTANT')")
+    @PostMapping("/customers")
+    public User createCustomer(@RequestBody User user) {
+        user.setRole(User.Role.CUSTOMER); // force role
+        return userService.addUser(user);
+    }
+
+    @PreAuthorize("hasRole('ACCOUNTANT')")
+    @PutMapping("/customers/{email}")
+    public User updateCustomer(@PathVariable String email, @RequestBody User updatedUser) {
+        updatedUser.setEmailId(email); // ensure update by email
+        return userService.updateCustomer(updatedUser);
+    }
+
+    @PreAuthorize("hasRole('ACCOUNTANT')")
+    @DeleteMapping("/customers/{email}")
+    public void deleteCustomerByEmail(@PathVariable String email) {
+        userService.deleteCustomerByEmail(email);
+    }
+
+    // CUSTOMER: Manage own profile (optional)
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/me")
+    public User getMyProfile(Authentication auth) {
+        return userService.getUserByEmail(auth.getName()); // auth.getName() = email/username
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @PutMapping("/me")
+    public User updateMyProfile(Authentication auth, @RequestBody User updatedUser) {
+        updatedUser.setEmailId(auth.getName());
+        return userService.updateCustomer(updatedUser);
+    }
+}

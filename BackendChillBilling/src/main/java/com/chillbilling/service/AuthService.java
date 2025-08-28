@@ -4,6 +4,7 @@ import com.chillbilling.dto.AuthResponse;
 import com.chillbilling.dto.LoginRequest;
 import com.chillbilling.dto.RegisterRequest;
 import com.chillbilling.dto.RegisterResponse;
+import com.chillbilling.entity.Invoice;
 import com.chillbilling.entity.User;
 import com.chillbilling.exception.BusinessException;
 import com.chillbilling.repository.UserRepository;
@@ -23,6 +24,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder; // Already configured in your project
     private final TokenService tokenService;
     private final EmailService emailService;
+    private final InvoiceService invoiceService;
 
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmailId(request.getIdentifier())
@@ -39,7 +41,7 @@ public class AuthService {
 
         String token = tokenService.generateToken(user);
 
-        return new AuthResponse(token, user.getRole().name());
+        return new AuthResponse(token, user.getRole().name(), user.getUsername());
     }
     
     public RegisterResponse register(RegisterRequest request) {
@@ -125,5 +127,19 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    public void sendOverdueInvoiceNotification(String email, String invoiceNumber) {
+        Invoice invoice = invoiceService.getInvoice(invoiceNumber);
+
+        if (!invoice.getCustomer().getEmailId().equals(email)) {
+            throw new IllegalArgumentException("Invoice does not belong to the provided email.");
+        }
+
+        emailService.notifyOverdueInvoice(
+                email,
+                invoice.getInvoiceNumber(),
+                invoice.getBalance(),
+                invoice.getDueDate()
+        );
+    }
 
 }

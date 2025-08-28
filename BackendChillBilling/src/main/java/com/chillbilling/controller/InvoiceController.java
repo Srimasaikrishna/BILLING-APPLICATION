@@ -38,7 +38,11 @@ public class InvoiceController {
     @PreAuthorize("hasAnyRole('ADMIN','ACCOUNTANT')")
     @PutMapping
     public ResponseEntity<String> updateInvoice(@Validated(OnUpdate.class) @RequestBody InvoiceRequest request) {
-        invoiceService.updateInvoice(request);
+    	Invoice updated = invoiceService.updateInvoice(request);
+    	if (updated.getPaidAmount() > updated.getTotalAmount()) {
+            double refundAmount = updated.getPaidAmount() - updated.getTotalAmount();
+            return ResponseEntity.ok("Invoice updated. The paid is greater than total, A mail related to refund of ₹" + refundAmount + " sent to customer");
+        }
         return ResponseEntity.ok("Invoice updated successfully");
     }
 

@@ -1,0 +1,62 @@
+package com.chillbilling.service;
+
+import com.chillbilling.entity.Invoice;
+import com.chillbilling.entity.Payment;
+import com.chillbilling.exception.BusinessException;
+import com.chillbilling.exception.ResourceNotFoundException;
+import com.chillbilling.repository.InvoiceRepository;
+import com.chillbilling.repository.PaymentRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+public class PaymentService {
+
+    private final PaymentRepository paymentRepository;
+    private final InvoiceRepository invoiceRepository;
+
+    public PaymentService(PaymentRepository paymentRepository,
+                          InvoiceRepository invoiceRepository) {
+        this.paymentRepository = paymentRepository;
+        this.invoiceRepository = invoiceRepository;
+    }
+
+    // ✅ Record a Payment and update Invoice automatically
+    public Payment recordPayment(String invoiceNumber, Payment paymentRequest) {
+        Invoice invoice = invoiceRepository.findByInvoiceNumber(invoiceNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice not found: " + invoiceNumber));
+
+        // Validation
+        if (paymentRequest.getAmount() <= 0) {
+            throw new BusinessException("Payment amount must be greater than 0");
+        }
+
+        double newPaidAmount = invoice.getPaidAmount() + paymentRequest.getAmount();
+
+        if (newPaidAmount > invoice.getTotalAmount()) {
+            throw new BusinessException("Payment exceeds total invoice amount");
+        }
+
+        // Save payment
+        paymentRequest.setInvoice(invoice);
+        Payment savedPayment = paymentRepository.save(paymentRequest);
+
+        // Update invoice amounts
+        invoice.setPaidAmount(newPaidAmount);
+        invoice.setBalance(invoice.getTotalAmount() - newPaidAmount);
+
+        // Update status
+        if (invoice.getBalance() == 0) {
+            invoice.setStatus(Invoice.Status.PAID);
+        } else if (invoice.getPaidAmount() == 0) {
+            invoice.setStatus(Invoice.Status.UNPAID);
+        } else {
+            invoice.setStatus(Invoice.Status.PARTIALLY_PAID);
+        }
+
+        invoiceRepository.save(invoice);
+
+        return savedPayment;
+    }
+}

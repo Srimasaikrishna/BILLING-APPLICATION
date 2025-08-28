@@ -95,8 +95,7 @@ public class InvoiceItemService {
         }
 
         invoice.setTotalAmount(totalAmount);
-        invoice.setBalance(totalAmount - invoice.getPaidAmount());
-
+        
         invoiceRepository.save(invoice);
     }
 

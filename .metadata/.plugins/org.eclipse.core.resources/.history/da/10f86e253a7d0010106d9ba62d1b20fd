@@ -1,0 +1,101 @@
+package com.chillbilling.service;
+
+import com.chillbilling.dto.PaymentRecord;
+import com.chillbilling.entity.Invoice;
+import com.chillbilling.entity.Payment;
+import com.chillbilling.exception.BusinessException;
+import com.chillbilling.exception.ResourceNotFoundException;
+import com.chillbilling.repository.InvoiceRepository;
+import com.chillbilling.repository.PaymentRepository;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+public class PaymentService {
+
+    private final PaymentRepository paymentRepository;
+    private final InvoiceRepository invoiceRepository;
+
+    public PaymentService(PaymentRepository paymentRepository, InvoiceRepository invoiceRepository) {
+        this.paymentRepository = paymentRepository;
+        this.invoiceRepository = invoiceRepository;
+    }
+    
+    public List<Payment> getPaymentsByInvoiceId(Long invoiceId) {
+        return paymentRepository.findByInvoice_InvoiceId(invoiceId);
+    }
+
+    public Payment recordPayment(PaymentRecord record) {
+        // Find invoice
+    	Invoice invoice = invoiceRepository.findByInvoiceNumber(record.getInvoiceNumber())
+    	        .orElseThrow(() -> new ResourceNotFoundException(
+    	                "Invoice not found with number: " + record.getInvoiceNumber()));
+
+        // Validate amount (only for SUCCESS payments)
+        if (record.getStatus() == Payment.Status.SUCCESS) {
+            if (record.getAmount() <= 0) {
+                throw new BusinessException("Payment amount must be greater than 0.");
+            }
+            if (record.getAmount() > invoice.getBalance()) {
+                throw new BusinessException("Payment amount cannot exceed remaining balance.");
+            }
+        }
+
+        // Check for duplicate transaction ID if provided
+        if (record.getTransactionId() != null && !record.getTransactionId().isEmpty()) {
+            boolean exists = paymentRepository.existsByTransactionId(record.getTransactionId());
+            if (exists) {
+                throw new BusinessException("Duplicate transaction ID: " + record.getTransactionId());
+            }
+        }
+        
+        // Create payment entry
+        Payment payment = new Payment();
+        payment.setInvoice(invoice);
+        payment.setAmount(record.getAmount());
+        payment.setMethod(record.getMethod());
+        payment.setStatus(record.getStatus());
+        payment.setTransactionId(record.getTransactionId());
+        payment.setPaymentDate(record.getPaymentDate() != null 
+                ? record.getPaymentDate() 
+                : java.time.LocalDateTime.now());
+
+        paymentRepository.save(payment);
+
+        // Update invoice amounts ONLY if payment is SUCCESS
+        if (record.getStatus() == Payment.Status.SUCCESS) {
+            double newPaidAmount = invoice.getPaidAmount() + record.getAmount();
+            double newBalance = invoice.getTotalAmount() - newPaidAmount;
+
+            invoice.setPaidAmount(newPaidAmount);
+            invoice.setBalance(newBalance);
+
+            // Update invoice status
+            if (newBalance == 0) {
+                invoice.setStatus(Invoice.Status.PAID);
+            } else if (newPaidAmount == 0) {
+                // No payment made
+                if (invoice.getDueDate().isBefore(java.time.LocalDate.now())) {
+                    invoice.setStatus(Invoice.Status.OVERDUE);
+                } else {
+                    invoice.setStatus(Invoice.Status.UNPAID);
+                }
+            } else {
+                // Partial payment made
+                if (invoice.getDueDate().isBefore(java.time.LocalDate.now())) {
+                    invoice.setStatus(Invoice.Status.OVERDUE);
+                } else {
+                    invoice.setStatus(Invoice.Status.PARTIALLY_PAID);
+                }
+            }
+
+        }
+
+        invoiceRepository.save(invoice);
+        return payment;
+    }
+}

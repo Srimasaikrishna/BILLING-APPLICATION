@@ -1,0 +1,5 @@
+package com.chillbilling.dto;
+
+public class PaymentRecord {
+
+}

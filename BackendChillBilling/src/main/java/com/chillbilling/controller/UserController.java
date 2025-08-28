@@ -45,12 +45,20 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/by-email")
     public User getUserByEmail(@RequestBody EmailRequest request) {
+    	
         return userService.getUserByEmail(request.getEmail());
+    }
+    
+    @PreAuthorize("hasRole('ACCOUNTANT')")
+    @GetMapping("/my-profile")
+    public User getUserByUsername(Authentication auth) {
+    	User existingUser=userService.getUserByIdentifier(auth.getName());
+        return userService.getUserByEmail(existingUser.getEmailId());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
-    public ResponseEntity<String> updateUserByAdmin(@RequestBody User updatedUser) {
+    public ResponseEntity<String> updateUser(@RequestBody User updatedUser) {
         userService.updateUser(updatedUser);
         return ResponseEntity.ok("User updated successfully");
     }
@@ -63,7 +71,7 @@ public class UserController {
     }
 
     // ACCOUNTANT: Manage only customers
-    @PreAuthorize("hasRole('ACCOUNTANT')")
+    @PreAuthorize("hasAnyRole('ACCOUNTANT', 'ADMIN')")
     @PostMapping("/customers")
     public ResponseEntity<String> createCustomer(@RequestBody User user) {
         user.setRole(User.Role.CUSTOMER);
@@ -71,26 +79,26 @@ public class UserController {
         return ResponseEntity.ok("Customer created successfully");
     }
 
-    @PreAuthorize("hasRole('ACCOUNTANT')")
+    @PreAuthorize("hasAnyRole('ACCOUNTANT', 'ADMIN')")
     @GetMapping("/customers")
     public List<User> getAllCustomers() {
         return userService.getAllCustomers();
     }
 
-    @PreAuthorize("hasRole('ACCOUNTANT')")
+    @PreAuthorize("hasAnyRole('ACCOUNTANT', 'ADMIN')")
     @PostMapping("/customers/by-email")
     public User getCustomerByEmail(@RequestBody EmailRequest request) {
         return userService.getCustomerByEmail(request.getEmail());
     }
 
-    @PreAuthorize("hasRole('ACCOUNTANT')")
+    @PreAuthorize("hasAnyRole('ACCOUNTANT', 'ADMIN')")
     @PutMapping("/customers")
     public ResponseEntity<String> updateCustomer(@RequestBody User updatedUser) {
         userService.updateCustomer(updatedUser);
         return ResponseEntity.ok("Customer updated successfully");
     }
 
-    @PreAuthorize("hasRole('ACCOUNTANT')")
+    @PreAuthorize("hasAnyRole('ACCOUNTANT', 'ADMIN')")
     @DeleteMapping("/customers")
     public ResponseEntity<String> deleteCustomerByEmail(@RequestBody EmailRequest request) {
         userService.deleteCustomerByEmail(request.getEmail());

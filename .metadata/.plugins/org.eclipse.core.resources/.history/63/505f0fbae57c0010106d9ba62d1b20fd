@@ -1,0 +1,5 @@
+package com.chillbilling.security;
+
+public class CustomUserDetailsService {
+
+}

@@ -33,6 +33,7 @@ public class PaymentService {
 
 
     public Payment recordPayment(PaymentRecord record) {
+    	System.out.println("Recording payment: " + record);
         // Find invoice
     	Invoice invoice = invoiceRepository.findByInvoiceNumber(record.getInvoiceNumber())
     	        .orElseThrow(() -> new ResourceNotFoundException(
@@ -49,7 +50,7 @@ public class PaymentService {
         }
 
         // Check for duplicate transaction ID if provided
-        if (record.getTransactionId() != null && !record.getTransactionId().isEmpty()) {
+        if (record.getTransactionId() != null && !record.getTransactionId().isBlank()) {
             boolean exists = paymentRepository.existsByTransactionId(record.getTransactionId());
             if (exists) {
                 throw new BusinessException("Duplicate transaction ID: " + record.getTransactionId());
@@ -74,26 +75,24 @@ public class PaymentService {
             double newPaidAmount = invoice.getPaidAmount() + record.getAmount();
             double newBalance = invoice.getTotalAmount() - newPaidAmount;
 
+            if (newBalance < 0) {
+                throw new BusinessException("Calculated balance cannot be negative.");
+            }
+            
             invoice.setPaidAmount(newPaidAmount);
             invoice.setBalance(newBalance);
 
-            // Update invoice status
+            // Update invoice status            
             if (newBalance == 0) {
                 invoice.setStatus(Invoice.Status.PAID);
             } else if (newPaidAmount == 0) {
-                // No payment made
-                if (invoice.getDueDate().isBefore(java.time.LocalDate.now())) {
-                    invoice.setStatus(Invoice.Status.OVERDUE);
-                } else {
-                    invoice.setStatus(Invoice.Status.UNPAID);
-                }
+                invoice.setStatus(invoice.getDueDate().isBefore(java.time.LocalDate.now())
+                        ? Invoice.Status.OVERDUE
+                        : Invoice.Status.UNPAID);
             } else {
-                // Partial payment made
-                if (invoice.getDueDate().isBefore(java.time.LocalDate.now())) {
-                    invoice.setStatus(Invoice.Status.OVERDUE);
-                } else {
-                    invoice.setStatus(Invoice.Status.PARTIALLY_PAID);
-                }
+                invoice.setStatus(invoice.getDueDate().isBefore(java.time.LocalDate.now())
+                        ? Invoice.Status.OVERDUE
+                        : Invoice.Status.PARTIALLY_PAID);
             }
 
         }

@@ -18,7 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import java.util.List;
 
 @Configuration
-@EnableMethodSecurity(prePostEnabled = true) // enables @PreAuthorize on your controllers
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Bean
@@ -63,7 +63,9 @@ public class SecurityConfig {
                 		"/api/auth/register",
                         "/api/auth/verify",
                         "/api/auth/forgot-password",
-                        "/api/auth/reset-password").permitAll()
+                        "/api/auth/reset-password",
+                        "/api/auth/notify",
+                        "/api/payments/webhook").permitAll()
 
                 // (Optional) allow actuator/health if you use it:
                 //.requestMatchers("/actuator/health").permitAll()

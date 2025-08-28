@@ -28,7 +28,7 @@ public class PaymentRecord {
     @NotNull(message = "Payment status is required")
     private Payment.Status status;
     
-    @Size(max = 20, message = "Transaction ID must not exceed 20 characters")
+    @Size(max = 30, message = "Transaction ID must not exceed 30 characters")
     private String transactionId;
     
     @PastOrPresent(message = "Payment date cannot be in the future")

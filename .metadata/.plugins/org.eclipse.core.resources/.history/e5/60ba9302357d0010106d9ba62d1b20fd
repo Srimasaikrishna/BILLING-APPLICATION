@@ -1,0 +1,19 @@
+package com.chillbilling.dto;
+
+import java.time.LocalDate;
+import java.util.List;
+import lombok.Data;
+
+@Data
+public class InvoiceRequest {
+    private String customerEmail;
+    private LocalDate dueDate;
+    private Double paidAmount;
+    private List<ItemRequest> items;
+
+    @Data
+    public static class ItemRequest {
+        private String productName;
+        private Integer quantity;
+    }
+}

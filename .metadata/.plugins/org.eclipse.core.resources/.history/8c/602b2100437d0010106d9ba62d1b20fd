@@ -1,0 +1,53 @@
+package com.chillbilling.controller;
+
+import com.chillbilling.dto.InvoiceNumberRequest;
+import com.chillbilling.dto.PaymentRecord;
+import com.chillbilling.entity.Payment;
+import com.chillbilling.service.PaymentService;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/payments")
+public class PaymentController {
+
+    private final PaymentService paymentService;
+
+    public PaymentController(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
+
+    // 1. Record a payment (ADMIN or ACCOUNTANT)
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
+    @PostMapping
+    public Payment recordPayment(@RequestBody PaymentRecord record) {
+        return paymentService.recordPayment(record);
+    }
+
+    // 2. Get all payments (ADMIN or ACCOUNTANT)
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
+    @GetMapping
+    public List<Payment> getAllPayments() {
+        return paymentService.getAllPayments();
+    }
+
+    // 3. Get payments by invoice number (ADMIN or ACCOUNTANT)
+    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
+    @PostMapping("/by-invoice")
+    public List<Payment> getPaymentsByInvoiceNumber(@RequestBody InvoiceNumberRequest request) {
+        return paymentService.getPaymentsByInvoiceNumber(request.getInvoiceNumber());
+    }
+
+    // 4. Get current customer’s payment history
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/my")
+    public List<Payment> getCurrentCustomerPayments(Authentication auth) {
+        String email = auth.getName();
+        return paymentService.getPaymentsByCustomerEmail(email);
+    }
+}
