@@ -15,6 +15,6 @@ A **full-stack Billing Application** built using **Java Spring Boot** for the ba
   - Create, edit, and view invoices.
   - Role-based invoice access.
   
-- **Frontend**: React.js SPA for dynamic and responsive user interface.
+- **Frontend**: React.js for dynamic and responsive user interface.
 
-- **Backend**: Java 21, Spring Boot, Spring MVC, Spring Data JPA, Hibernate, MySQL (or H2 for testing), Spring Security.
+- **Backend**: Java 17, Spring Boot, Spring MVC, Spring Data JPA, Hibernate, MySQL , Spring Security.
